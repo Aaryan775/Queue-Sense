@@ -1,0 +1,36 @@
+# =============================================
+# QueueSense - Git Ignore Configuration
+# =============================================
+
+# Python virtual environment
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment variables
+.env
+.env.local
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sql.bak
+
+# Distribution
+dist/
+build/
+*.egg-info/

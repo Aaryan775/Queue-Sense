@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Login Page
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - QueueSense</title>
+    <meta name="description" content="Login to QueueSense to manage your queue and appointments.">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+    <style>
+        /* Immersive Enterprise Layout */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(26, 26, 46, 0.7), rgba(26, 26, 46, 0.7)),
+                url('img/hero_smart_queue_system.png');
+            background-size: cover;
+            background-position: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .login-card-container {
+            display: flex;
+            width: 100%;
+            max-width: 1150px;
+            height: 800px;
+            /* Increased height for better content fit */
+            background: rgba(26, 26, 46, 0.95);
+            /* Deep card dark theme */
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 3.5rem;
+            overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.6);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        /* Left Visual Side (Smart Queue System) */
+        .login-visual-side {
+            flex: 0.85;
+            position: relative;
+            background: url('img/hero_smart_queue_system.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Right Form Side */
+        .login-form-side {
+            flex: 1.15;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem;
+            position: relative;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Back Link - Page Level Top Left with High Contrast */
+        .back-link {
+            position: absolute;
+            top: 2.5rem;
+            left: 2.5rem;
+            color: #1a1a2e;
+            /* Dark as requested */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            padding: 0.85rem 1.5rem;
+            border-radius: 1.25rem;
+            background: rgba(255, 255, 255, 0.9);
+            /* Ultra-bright glass for dark text accessibility */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link:hover {
+            color: var(--neon-green);
+            background: #ffffff;
+            transform: translateX(-5px);
+        }
+
+        .login-logo {
+            font-size: 4rem;
+            /* More prominent logo */
+            color: var(--neon-green);
+            margin-bottom: 2rem;
+            text-align: center;
+            filter: drop-shadow(0 0 15px rgba(57, 255, 20, 0.3));
+        }
+
+        .login-title {
+            color: white;
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            letter-spacing: -0.025em;
+        }
+
+        .login-subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            /* Reduced margin to bring bottom content up */
+            text-align: center;
+        }
+
+        /* Forms Layout & Height */
+        .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .login-card-container {
+                flex-direction: column;
+                height: auto;
+                max-width: 500px;
+                border-radius: 2.5rem;
+            }
+
+            .login-visual-side {
+                height: 250px;
+                display: block;
+            }
+
+            .login-form-side {
+                padding: 4rem 2rem;
+            }
+
+            .back-link {
+                top: 1.5rem;
+                left: 1.5rem;
+            }
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-purple-light);
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: var(--neon-green);
+        }
+
+        .form-check-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--neon-green);
+            border-color: var(--neon-green);
+        }
+
+        .form-check-label {
+            color: var(--text-purple-light);
+            font-size: 0.9rem;
+        }
+
+        .forgot-link {
+            color: var(--primary-purple);
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgot-link:hover {
+            color: var(--neon-green);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            /* Reduced margin */
+            color: var(--text-purple-light);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .register-link {
+            text-align: center;
+            color: var(--text-purple-light);
+        }
+
+        .register-link a {
+            color: var(--neon-green);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* Alert styling */
+        .alert {
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            color: var(--neon-green);
+        }
+
+        /* Modal styles */
+        .modal-content {
+            background: rgba(30, 20, 50, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            color: var(--text-light);
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-body .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-body .form-control:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.15);
+        }
+
+        .modal-body .form-label {
+            color: var(--text-purple-light);
+        }
+
+        .password-hint {
+            font-size: 0.8rem;
+            color: var(--text-purple-light);
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Page Container -->
+    <div class="login-page">
+        <!-- Back to Home Link (Modern Accessibility) -->
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+
+        <div class="login-card-container">
+            <!-- Visual Side -->
+            <div class="login-visual-side">
+            </div>
+
+            <!-- Form Side -->
+            <div class="login-form-side">
+                <div class="login-container">
+                    <div class="login-logo">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h1 class="login-title">Welcome Back</h1>
+                    <p class="login-subtitle">Sign in to your enterprise account</p>
+
+                    <!-- Alert for errors/success -->
+                    <div id="loginAlert" class="alert" role="alert">
+                        <span id="loginAlertMessage"></span>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" class="login-form" novalidate>
+                        <div class="form-group mb-4">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" class="form-control" id="username" name="username"
+                                    placeholder="Enter your username" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group position-relative">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Enter your password" required>
+                                <span class="password-toggle"
+                                    onclick="togglePassword('password', 'passwordToggleIcon')">
+                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="remember">
+                                <label class="form-check-label" for="remember">Remember me</label>
+                            </div>
+                            <a class="forgot-link" data-bs-toggle="modal"
+                                data-bs-target="#forgotPasswordModal">Forgot?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary login-btn btn-ripple" id="loginBtn">
+                            <span id="btnText">Sign In to Dashboard</span>
+                            <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        </button>
+                    </form>
+
+                    <div class="divider"><span>or</span></div>
+
+                    <p class="register-link">
+                        New to QueueSense? <a href="register.html">Create an Account</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">
+                        <i class="fas fa-key me-2"></i>Reset Password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Forgot Password Alert -->
+                    <div id="forgotAlert" class="alert" role="alert">
+                        <span id="forgotAlertMessage"></span>
+                    </div>
+
+                    <form id="forgotPasswordForm">
+                        <div class="mb-3">
+                            <label for="forgotUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="forgotUsername"
+                                placeholder="Enter your username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword"
+                                placeholder="Enter new password" required>
+                            <div class="password-hint">8-16 characters, at least 1 special character (!@#$%^&*)</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmNewPassword"
+                                placeholder="Confirm new password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="resetBtn">
+                            <span id="resetBtnText">Reset Password</span>
+                            <span id="resetBtnSpinner" class="spinner-border spinner-border-sm d-none"
+                                role="status"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Login Script -->
+    <script>
+        // API Base URL - use relative path for same-origin requests
+        const API_BASE = '';
+
+        // Toggle password visibility
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Show alert message
+        function showAlert(elementId, message, type = 'error') {
+            const alert = document.getElementById(elementId);
+            const alertMessage = document.getElementById(elementId.replace('Alert', 'AlertMessage'));
+
+            alert.className = `alert alert-${type}`;
+            alertMessage.textContent = message;
+            alert.style.display = 'block';
+
+            if (type === 'error') {
+                alert.classList.add('animate-shake');
+                setTimeout(() => alert.classList.remove('animate-shake'), 500);
+            }
+        }
+
+        // Hide alert
+        function hideAlert(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        // Set loading state
+        function setLoading(btnId, textId, spinnerId, loading, defaultText = 'Sign In') {
+            const btn = document.getElementById(btnId);
+            const btnText = document.getElementById(textId);
+            const btnSpinner = document.getElementById(spinnerId);
+
+            if (loading) {
+                btn.disabled = true;
+                btnText.textContent = 'Please wait...';
+                btnSpinner.classList.remove('d-none');
+            } else {
+                btn.disabled = false;
+                btnText.textContent = defaultText;
+                btnSpinner.classList.add('d-none');
+            }
+        }
+
+        // Validate password format
+        function validatePassword(password) {
+            if (password.length < 8) {
+                return { valid: false, error: 'Password must be at least 8 characters' };
+            }
+            if (password.length > 16) {
+                return { valid: false, error: 'Password must not exceed 16 characters' };
+            }
+            const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+            if (!specialChars.test(password)) {
+                return { valid: false, error: 'Password must contain at least 1 special character' };
+            }
+            return { valid: true };
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            hideAlert('loginAlert');
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Basic validation
+            if (!username || !password) {
+                showAlert('loginAlert', 'Please enter both username and password.');
+                return;
+            }
+
+            setLoading('loginBtn', 'btnText', 'btnSpinner', true, 'Sign In');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success - store token and redirect
+                    localStorage.setItem('qs_token', data.token);
+                    localStorage.setItem('qs_user', JSON.stringify(data.user));
+
+                    showAlert('loginAlert', 'Login successful! Redirecting...', 'success');
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        const role = data.user.role;
+                        if (role === 'admin') {
+                            window.location.href = 'admin/dashboard.html';
+                        } else if (role === 'staff') {
+                            window.location.href = 'staff/dashboard.html';
+                        } else {
+                            window.location.href = 'user/dashboard.html';
+                        }
+                    }, 1000);
+                } else {
+                    showAlert('loginAlert', data.error || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('loginAlert', 'Network error. Please check your connection.');
+            } finally {
+                setLoading('loginBtn', 'btnText', 'btnSpinner', false, 'Sign In');
+            }
+        });
+
+        // Handle forgot password form submission
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            hideAlert('forgotAlert');
+
+            const username = document.getElementById('forgotUsername').value.trim();
+
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+            // Validation
+            if (!username || !newPassword || !confirmPassword) {
+                showAlert('forgotAlert', 'All fields are required.');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showAlert('forgotAlert', 'New passwords do not match.');
+                return;
+            }
+
+            const passwordCheck = validatePassword(newPassword);
+            if (!passwordCheck.valid) {
+                showAlert('forgotAlert', passwordCheck.error);
+                return;
+            }
+
+            setLoading('resetBtn', 'resetBtnText', 'resetBtnSpinner', true, 'Reset Password');
+
+            try {
+                const response = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        newPassword: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('forgotAlert', 'Password changed successfully! You can now login.', 'success');
+
+                    // Clear form and close modal after 2 seconds
+                    setTimeout(() => {
+                        document.getElementById('forgotPasswordForm').reset();
+                        bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
+                    }, 2000);
+                } else {
+                    showAlert('forgotAlert', data.error || 'Failed to reset password.');
+                }
+            } catch (error) {
+                console.error('Reset password error:', error);
+                showAlert('forgotAlert', 'Network error. Please try again.');
+            } finally {
+                setLoading('resetBtn', 'resetBtnText', 'resetBtnSpinner', false, 'Reset Password');
+            }
+        });
+
+        // Check if already logged in
+        // Check if already logged in - DISABLED per user request
+        // User must explicitly log in
+        /*
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('qs_token');
+            const user = localStorage.getItem('qs_user');
+
+            if (token && user) {
+                const userData = JSON.parse(user);
+                // Redirect to appropriate dashboard
+                if (userData.role === 'admin') {
+                    window.location.href = 'admin/dashboard.html';
+                } else if (userData.role === 'staff') {
+                    window.location.href = 'staff/dashboard.html';
+                } else {
+                    window.location.href = 'user/dashboard.html';
+                }
+            }
+        });
+        */
+    </script>
+</body>
+
+</html>

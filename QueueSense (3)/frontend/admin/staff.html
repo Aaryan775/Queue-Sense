@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Admin Staff Management
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Staff - Admin Panel</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .sidebar-nav-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            color: #000 !important;
+            font-weight: 700;
+            background: none !important;
+            -webkit-text-fill-color: initial !important;
+            background-clip: initial !important;
+        }
+
+        .staff-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .staff-table th {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #f0f0f0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .staff-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .staff-table tr:hover {
+            background: #fafafa;
+        }
+
+        .staff-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .staff-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.available {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-badge.busy {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .service-tag {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #444;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* Sector Specific Styles */
+        .sector-badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .sector-hospital {
+            background: rgba(16, 185, 129, 0.1) !important;
+            color: #10b981 !important;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .sector-bank {
+            background: rgba(59, 130, 246, 0.1) !important;
+            color: #3b82f6 !important;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .sector-restaurant {
+            background: rgba(236, 72, 153, 0.1) !important;
+            color: #ec4899 !important;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .sector-government {
+            background: rgba(245, 158, 11, 0.1) !important;
+            color: #f59e0b !important;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .sector-bg-hospital {
+            background: #10b981 !important;
+        }
+
+        .sector-bg-bank {
+            background: #3b82f6 !important;
+        }
+
+        .sector-bg-restaurant {
+            background: #ec4899 !important;
+        }
+
+        .sector-bg-government {
+            background: #f59e0b !important;
+        }
+
+        .staff-row {
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .staff-row:hover {
+            background: #f8fafc !important;
+        }
+
+        .sector-border-hospital {
+            border-left-color: #10b981 !important;
+        }
+
+        .sector-border-bank {
+            border-left-color: #3b82f6 !important;
+        }
+
+        .sector-border-restaurant {
+            border-left-color: #ec4899 !important;
+        }
+
+        .sector-border-government {
+            border-left-color: #f59e0b !important;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action.edit {
+            background: rgba(74, 144, 226, 0.1);
+            color: #4a90e2;
+        }
+
+        .btn-action.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+
+        /* Search & Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .search-input {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input input:focus {
+            border-color: var(--primary-purple);
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ff1744;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .custom-toast {
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid #10b981;
+        }
+
+        .custom-toast.error {
+            border-left-color: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-overlay i {
+            font-size: 3rem;
+            color: var(--primary-purple);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services.html" class="sidebar-nav-item">
+                    <i class="fas fa-cogs"></i>
+                    <span>Manage Services</span>
+                </a>
+                <a href="staff.html" class="sidebar-nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Staff</span>
+                </a>
+                <a href="users.html" class="sidebar-nav-item">
+                    <i class="fas fa-user-group"></i>
+                    <span>Users</span>
+                </a>
+                <a href="analytics.html" class="sidebar-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="settings.html" class="sidebar-nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Manage Staff</h1>
+                    <p class="text-muted">Register and manage queue staff members</p>
+                </div>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-user-plus me-2"></i> Register New Staff
+                </button>
+            </header>
+
+            <div class="staff-card">
+                <div class="filter-bar">
+                    <div class="search-input">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="staffSearch" placeholder="Search by name, email or service..."
+                            onkeyup="filterStaff()">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="staff-table">
+                        <thead>
+                            <tr>
+                                <th>Staff Member</th>
+                                <th>Assigned Service</th>
+                                <th>Counter</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffTableBody">
+                            <!-- Staff rows loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Staff Modal -->
+    <div class="modal fade" id="addStaffModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header" style="background: var(--gradient-primary); border: none;">
+                    <h5 class="modal-title text-white fw-bold">
+                        <i class="fas fa-id-card-alt me-2"></i> Register New Staff
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-4">Provide the following details to create a new staff account with
+                        system access.</p>
+                    <form id="addStaffForm">
+                        <div class="mb-4">
+                            <label class="form-label fw-600">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fas fa-user text-muted"></i></span>
+                                <input type="text" id="staffName" class="form-control border-start-0 ps-0"
+                                    placeholder="e.g. John Doe" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-600">Email Address (Username)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fas fa-envelope text-muted"></i></span>
+                                <input type="email" id="staffEmail" class="form-control border-start-0 ps-0"
+                                    placeholder="staff@queuesense.com" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-600">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fas fa-lock text-muted"></i></span>
+                                <input type="password" id="staffPassword" class="form-control border-start-0 ps-0"
+                                    value="Staff@123!" required>
+                            </div>
+                            <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> Default:
+                                <strong>Staff@123!</strong> (Must contain special char)
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-7">
+                                <label class="form-label fw-600">Assigned Service</label>
+                                <select id="serviceSelect" class="form-select" required>
+                                    <option value="">Select a service</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-600">Counter (1-4)</label>
+                                <input type="number" id="counterNumber" class="form-control" placeholder="1-4" min="1"
+                                    max="4">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="addStaff()">
+                        <i class="fas fa-check-circle me-1"></i> Confirm Registration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Staff Modal -->
+    <div class="modal fade" id="editStaffModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark border-none">
+                    <h5 class="modal-title text-white fw-bold">
+                        <i class="fas fa-user-edit me-2"></i> Edit Staff Member
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editStaffForm">
+                        <input type="hidden" id="editStaffId">
+                        <div class="mb-4">
+                            <label class="form-label fw-600">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-user text-muted"></i></span>
+                                <input type="text" id="editStaffName" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-7">
+                                <label class="form-label fw-600">Assigned Service</label>
+                                <select id="editServiceSelect" class="form-select" required>
+                                    <option value="">Select a service</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-600">Counter (1-4)</label>
+                                <input type="number" id="editCounterNumber" class="form-control" min="1" max="4">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600">Current Status</label>
+                            <select id="editStaffStatus" class="form-select">
+                                <option value="true">Available (On Duty)</option>
+                                <option value="false">Busy / Away (Off Duty)</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="updateStaff()">
+                        <i class="fas fa-save me-1"></i> Update Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteStaffModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <i class="fas fa-exclamation-triangle text-danger mb-4" style="font-size: 3rem;"></i>
+                    <h4 class="mb-3">Remove Staff Privileges?</h4>
+                    <p class="text-muted mb-4">This will remove staff access for <strong id="deleteStaffName"></strong>.
+                        The user account will remain but will no longer have staff access.</p>
+                    <input type="hidden" id="deleteStaffId">
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger px-4" onclick="confirmDeleteStaff()">Confirm
+                            Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Working...</span>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+
+    <script>
+        let staffData = [];
+        let servicesData = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isAdmin()) {
+                window.location.href = '../login.html';
+                return;
+            }
+            await initPage();
+        });
+
+        async function initPage() {
+            showLoading();
+            try {
+                // Load services first
+                const serviceRes = await API.Services.getAll();
+                servicesData = serviceRes?.data?.services || [];
+
+                await loadStaff();
+                populateServiceDropdowns();
+            } catch (error) {
+                showToast('Failed to initialize page', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadStaff() {
+            try {
+                const response = await API.Staff.getAll();
+                if (response && response.ok) {
+                    staffData = response.data.staff || [];
+                    renderStaffTable();
+                }
+            } catch (error) {
+                showToast('Error loading staff', 'error');
+            }
+        }
+
+        function renderStaffTable(data = staffData) {
+            const tbody = document.getElementById('staffTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">No staff members found</td></tr>';
+                return;
+            }
+
+            data.forEach(staff => {
+                const name = staff.user_name || 'Unknown Staff';
+                const username = staff.username || 'N/A';
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
+                // Find sector for assigned service
+                let sectorClass = 'government';
+                if (staff.assigned_services && staff.assigned_services.length > 0) {
+                    const firstServiceId = staff.assigned_services[0];
+                    const service = servicesData.find(s => s.service_id === firstServiceId);
+                    if (service && service.sector) sectorClass = service.sector.toLowerCase();
+                }
+
+                const services = staff.service_names && staff.service_names.length > 0
+                    ? staff.service_names.map(s => `<span class="service-tag sector-${sectorClass}">${s}</span>`).join('')
+                    : '<span class="text-muted italic small">No service assigned</span>';
+
+                // Determine badge color based on status
+                let statusClass = 'busy';
+                if (staff.status_text === 'Available') statusClass = 'available';
+                else if (staff.status_text.startsWith('Serving')) statusClass = 'busy'; // Busy serving
+                else statusClass = 'busy'; // On Break etc
+
+                const row = document.createElement('tr');
+                row.className = `staff-row sector-border-${sectorClass}`;
+                row.innerHTML = `
+                    <td>
+                        <div class="staff-info">
+                            <div class="staff-avatar sector-bg-${sectorClass}">${initials}</div>
+                            <div>
+                                <div class="fw-bold">${name}</div>
+                                <div class="small text-muted">${username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><div style="max-width: 250px;">${services}</div></td>
+                    <td><span class="badge bg-light text-dark border">Counter ${staff.counter_number || 'N/A'}</span></td>
+                    <td>
+                        <span class="status-badge ${statusClass}">
+                            <i class="fas ${staff.current_work ? 'fa-spinner fa-spin' : 'fa-circle'} me-1" style="font-size: 0.5rem;"></i>
+                            ${staff.status_text}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-btns justify-content-end">
+                            <button class="btn-action edit" onclick="openEditModal(${staff.staff_id})" title="Edit ${name}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action delete" onclick="openDeleteModal(${staff.staff_id})" title="Delete ${name}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function populateServiceDropdowns(containerId = null, filterSector = null) {
+            const containers = containerId ? [containerId] : ['serviceSelect', 'editServiceSelect'];
+
+            // Group services by sector
+            const grouped = {
+                hospital: [],
+                bank: [],
+                restaurant: [],
+                government: []
+            };
+
+            servicesData.forEach(s => {
+                const sector = (s.sector || 'government').toLowerCase();
+                if (grouped[sector]) {
+                    grouped[sector].push(s);
+                } else {
+                    grouped.government.push(s);
+                }
+            });
+
+            containers.forEach(id => {
+                const select = document.getElementById(id);
+                if (!select) return;
+
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select a service</option>';
+
+                for (const [sector, services] of Object.entries(grouped)) {
+                    if (services.length === 0) continue;
+
+                    // If filterSector is provided, only show that sector
+                    if (filterSector && sector !== filterSector) continue;
+
+                    const group = document.createElement('optgroup');
+                    group.label = sector.charAt(0).toUpperCase() + sector.slice(1);
+
+                    services.forEach(s => {
+                        const option = document.createElement('option');
+                        option.value = s.service_id;
+                        option.textContent = s.service_name;
+                        group.appendChild(option);
+                    });
+                    select.appendChild(group);
+                }
+                if (currentValue) select.value = currentValue;
+            });
+        }
+
+        function openAddModal() {
+            document.getElementById('addStaffForm').reset();
+            populateServiceDropdowns('serviceSelect'); // Show all grouped by sector
+            document.getElementById('serviceSelect').value = '';
+            new bootstrap.Modal(document.getElementById('addStaffModal')).show();
+        }
+
+        async function addStaff() {
+            const name = document.getElementById('staffName').value.trim();
+            const email = document.getElementById('staffEmail').value.trim();
+            const password = document.getElementById('staffPassword').value;
+            const counter = document.getElementById('counterNumber').value;
+            const serviceId = document.getElementById('serviceSelect').value;
+
+            // Proper Validation Logic
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!name || name.length < 3) {
+                showToast('Please enter a valid full name (min 3 characters)', 'error');
+                return;
+            }
+            if (!email || !emailRegex.test(email)) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+            if (!password || password.length < 6) {
+                showToast('Password must be at least 6 characters long for security', 'error');
+                return;
+            }
+            if (!serviceId) {
+                showToast('Please select an assigned service', 'error');
+                return;
+            }
+
+            if (counter && (counter < 1 || counter > 4)) {
+                showToast('Counter number must be between 1 and 4', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const staffPayload = {
+                    name: name,
+                    email: email,
+                    password: password,
+                    assigned_services: [parseInt(serviceId)], // Store as single item in list
+                    counter_number: counter ? parseInt(counter) : null
+                };
+
+                const response = await API.Staff.create(staffPayload);
+
+                if (response && response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addStaffModal')).hide();
+                    showToast('Staff registered successfully', 'success');
+                    await loadStaff();
+                } else {
+                    throw new Error(response?.data?.error || 'Failed to register staff');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openEditModal(staffId) {
+            const staff = staffData.find(s => s.staff_id === staffId);
+            if (!staff) return;
+
+            // Determine sector for this staff member to filter services
+            let staffSector = 'government';
+            if (staff.assigned_services && staff.assigned_services.length > 0) {
+                const svc = servicesData.find(s => s.service_id === staff.assigned_services[0]);
+                if (svc && svc.sector) staffSector = svc.sector.toLowerCase();
+            }
+
+            // Dynamically repopulate with only domain-specific services
+            populateServiceDropdowns('editServiceSelect', staffSector);
+
+            document.getElementById('editStaffId').value = staffId;
+            document.getElementById('editStaffName').value = staff.user_name;
+            document.getElementById('editCounterNumber').value = staff.counter_number || '';
+            document.getElementById('editStaffStatus').value = staff.is_available.toString();
+
+            // Set single service selection
+            const serviceId = staff.assigned_services && staff.assigned_services.length > 0
+                ? staff.assigned_services[0]
+                : '';
+            document.getElementById('editServiceSelect').value = serviceId;
+
+            new bootstrap.Modal(document.getElementById('editStaffModal')).show();
+        }
+
+        async function updateStaff() {
+            const staffId = document.getElementById('editStaffId').value;
+            const name = document.getElementById('editStaffName').value.trim();
+            const counter = document.getElementById('editCounterNumber').value;
+            const available = document.getElementById('editStaffStatus').value === 'true';
+            const serviceId = document.getElementById('editServiceSelect').value;
+
+            if (!serviceId) {
+                showToast('Please select a service', 'error');
+                return;
+            }
+
+            if (counter && (counter < 1 || counter > 4)) {
+                showToast('Counter number must be between 1 and 4', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await API.Staff.update(staffId, {
+                    name: name,
+                    assigned_services: [parseInt(serviceId)],
+                    counter_number: counter ? parseInt(counter) : null,
+                    is_available: available
+                });
+
+                if (response && response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('editStaffModal')).hide();
+                    showToast('Staff updated successfully', 'success');
+                    await loadStaff();
+                } else {
+                    throw new Error(response?.data?.error || 'Failed to update staff');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openDeleteModal(staffId) {
+            const staff = staffData.find(s => s.staff_id === staffId);
+            if (!staff) return;
+            document.getElementById('deleteStaffId').value = staffId;
+            document.getElementById('deleteStaffName').textContent = staff.user_name;
+            new bootstrap.Modal(document.getElementById('deleteStaffModal')).show();
+        }
+
+        async function confirmDeleteStaff() {
+            const staffId = document.getElementById('deleteStaffId').value;
+            showLoading();
+            try {
+                const response = await API.Staff.delete(staffId);
+                if (response && response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('deleteStaffModal')).hide();
+                    showToast('Staff privileges removed', 'success');
+                    await loadStaff();
+                } else {
+                    throw new Error(response?.data?.error || 'Failed to delete');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function filterStaff() {
+            const query = document.getElementById('staffSearch').value.toLowerCase();
+            const filtered = staffData.filter(s =>
+                s.user_name.toLowerCase().includes(query) ||
+                s.username.toLowerCase().includes(query) ||
+                (s.service_names && s.service_names.some(sn => sn.toLowerCase().includes(query)))
+            );
+            renderStaffTable(filtered);
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${msg}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showLoading() { document.getElementById('loadingOverlay').classList.add('show'); }
+        function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+        function logout() { Auth.logout(); window.location.href = '../login.html'; }
+    </script>
+</body>
+
+</html>

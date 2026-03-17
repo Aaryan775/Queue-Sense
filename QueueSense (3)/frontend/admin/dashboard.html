@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Admin Dashboard
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - QueueSense</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* Admin Dashboard Styles */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .sidebar-nav-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.blue {
+            background: rgba(74, 144, 226, 0.15);
+            color: var(--primary-blue);
+        }
+
+        .stat-icon.purple {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--primary-purple);
+        }
+
+        .stat-icon.green {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green-dark);
+        }
+
+        .stat-icon.orange {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.up {
+            color: #10b981;
+        }
+
+        .stat-change.down {
+            color: #ef4444;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-header h3 {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Tables */
+        .data-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-header h3 {
+            font-size: 1.125rem;
+            margin: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table tr:hover {
+            background: var(--light-gray);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green-dark);
+        }
+
+        .status-badge.inactive {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.edit {
+            background: rgba(74, 144, 226, 0.15);
+            color: var(--primary-blue);
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Quick Stats Cards */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-stat {
+            background: var(--gradient-dark);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            color: var(--text-light);
+        }
+
+        .quick-stat h4 {
+            color: var(--text-purple-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-stat .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+        }
+
+        .quick-stat .detail {
+            font-size: 0.85rem;
+            color: var(--text-purple-light);
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ff1744;
+        }
+
+        /* Carousel Section */
+        .dashboard-carousel {
+            margin-bottom: 2.5rem;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            height: 550px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #000;
+        }
+
+        .carousel-item {
+            height: 550px;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            opacity: 0.85;
+            transition: transform 5.5s ease;
+        }
+
+        .carousel-item.active img {
+            transform: scale(1.05);
+        }
+
+        .carousel-caption {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            padding: 2rem 3rem;
+            bottom: 15%;
+            left: 5%;
+            right: auto;
+            max-width: 600px;
+            text-align: left;
+            border-left: 6px solid var(--neon-green);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services.html" class="sidebar-nav-item">
+                    <i class="fas fa-cogs"></i>
+                    <span>Manage Services</span>
+                </a>
+                <a href="staff.html" class="sidebar-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Staff</span>
+                </a>
+                <a href="users.html" class="sidebar-nav-item">
+                    <i class="fas fa-user-group"></i>
+                    <span>Users</span>
+                </a>
+                <a href="analytics.html" class="sidebar-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="settings.html" class="sidebar-nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-title">
+                    <h1>Admin Dashboard</h1>
+                    <p class="text-muted">System Overview & Management</p>
+                </div>
+
+                <div class="header-actions d-flex gap-3">
+                    <select class="form-select" id="dateRange" style="width: auto;">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month" selected>This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="exportDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-file-export"></i> Export Report
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                            <li><a class="dropdown-item" href="#" onclick="exportReport('pdf')"><i
+                                        class="fas fa-file-pdf text-danger"></i> PDF Summary</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Carousel -->
+            <div id="adminCarousel" class="carousel slide dashboard-carousel" data-bs-ride="carousel"
+                data-bs-interval="5000">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=85&w=1800"
+                            alt="Administrative Dashboard">
+                        <div class="carousel-caption">
+                            <h3>Centralized Administration</h3>
+                            <p>Monitor operations, track performance metrics, and maintain complete system oversight.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=85&w=1800"
+                            alt="Analytics & Reporting">
+                        <div class="carousel-caption">
+                            <h3>Advanced Business Intelligence</h3>
+                            <p>Leverage powerful analytics, generate reports, and make strategic decisions.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&q=85&w=1800"
+                            alt="Resource Management">
+                        <div class="carousel-caption">
+                            <h3>Resource Optimization</h3>
+                            <p>Configure services, allocate resources, and ensure optimal efficiency.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-ticket"></i>
+                    </div>
+                    <div class="stat-value" id="totalTokens">0</div>
+                    <div class="stat-label">Tokens Served</div>
+                    <div class="stat-change up">
+                        <i class="fas fa-chart-line"></i> Total Volume
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="avgWait">0 min</div>
+                    <div class="stat-label">Avg Wait Time</div>
+                    <div class="stat-change down">
+                        <i class="fas fa-bolt"></i> Efficiency
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-indian-rupee-sign"></i>
+                    </div>
+                    <div class="stat-value" id="totalRevenue">₹ 0</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-change up">
+                        <i class="fas fa-check-circle"></i> Service Impact
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-value" id="timeSaved">0 hr</div>
+                    <div class="stat-label">Total Time Saved</div>
+                    <div class="stat-change up">
+                        <i class="fas fa-smile"></i> Crowd Relief
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <h4>Staff Efficiency</h4>
+                    <div class="value" id="staffEfficiency">0</div>
+                    <div class="detail">Tokens per staff member</div>
+                </div>
+                <div class="quick-stat">
+                    <h4>Customer Retention</h4>
+                    <div class="value" id="retentionRate">0%</div>
+                    <div class="detail">Repeat users assisted</div>
+                </div>
+                <div class="quick-stat">
+                    <h4>Elder Priority</h4>
+                    <div class="value" id="elderServed">0</div>
+                    <div class="detail">Elderly/Priority assistance</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Daily Queue Activity</h3>
+                        <div class="header-subtitle text-muted" id="chartTimeframeLabel">Showing data for This Month
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Service Distribution</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="serviceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Tables Grid -->
+            <div class="row g-4">
+                <!-- Recent Activity -->
+                <div class="col-lg-7">
+                    <div class="data-card">
+                        <div class="data-header">
+                            <h3><i class="fas fa-clock-rotate-left"></i> Recent Activity</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="showAllActivities()">View All</button>
+                        </div>
+
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Activity</th>
+                                    <th>Activity Details</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr>
+                                    <td>2 min ago</td>
+                                    <td>Token A045 served</td>
+                                    <td>Hospital - OPD</td>
+                                    <td><span class="status-badge active">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>5 min ago</td>
+                                    <td>New appointment booked</td>
+                                    <td>Bank - Savings</td>
+                                    <td><span class="status-badge active">Confirmed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10 min ago</td>
+                                    <td>Elder assisted</td>
+                                    <td>Railway - Tickets</td>
+                                    <td><span class="status-badge active">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Staff -->
+                <div class="col-lg-5">
+                    <div class="data-card">
+                        <div class="data-header">
+                            <h3><i class="fas fa-trophy"></i> Top Performers</h3>
+                        </div>
+
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Staff</th>
+                                    <th>Served</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staffTable">
+                                <tr>
+                                    <td>John Smith</td>
+                                    <td>156</td>
+                                    <td><i class="fas fa-star text-warning"></i> 4.9</td>
+                                </tr>
+                                <tr>
+                                    <td>Sarah Johnson</td>
+                                    <td>142</td>
+                                    <td><i class="fas fa-star text-warning"></i> 4.8</td>
+                                </tr>
+                                <tr>
+                                    <td>Mike Wilson</td>
+                                    <td>138</td>
+                                    <td><i class="fas fa-star text-warning"></i> 4.7</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        // Global chart references
+        let activityChart, serviceChart;
+        let refreshInterval;
+
+        // Initialize admin dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check auth
+            if (!Auth.isAdmin()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Restore timeframe preference
+            const savedTimeframe = localStorage.getItem('admin_timeframe');
+            if (savedTimeframe) {
+                const dateRangeSelector = document.getElementById('dateRange');
+                if (dateRangeSelector) dateRangeSelector.value = savedTimeframe;
+            }
+
+            // Show loading state
+            showLoading();
+
+            // Load dashboard data
+            await loadDashboardData();
+
+            // Initialize charts
+            await initCharts();
+
+            // Hide loading state
+            hideLoading();
+
+            // Start auto-refresh (every 30 seconds)
+            startAutoRefresh();
+        });
+
+        // Show loading overlay
+        function showLoading() {
+            // Add loading indicators to stat cards
+            document.querySelectorAll('.stat-value').forEach(el => {
+                el.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            });
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            // Loading indicators will be replaced by actual data
+        }
+
+        // Load all dashboard data
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadActivityFeed(),
+                    loadTopPerformers()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                Toast.error('Failed to load dashboard data');
+            }
+        }
+
+        // Load and update statistics
+        async function loadStats() {
+            try {
+                const timeframe = document.getElementById('dateRange')?.value || 'month';
+                localStorage.setItem('admin_timeframe', timeframe);
+
+                // Fetch required analytics data
+                const response = await API.Analytics.getAdminDashboard({ timeframe });
+
+                if (response && response.ok) {
+                    const stats = response.data;
+
+                    // Update Tokens Served
+                    const totalTokensEl = document.getElementById('totalTokens');
+                    if (totalTokensEl) totalTokensEl.textContent = (stats.total_tokens || 0).toLocaleString();
+
+                    // Update Avg Wait Time
+                    const avgWaitEl = document.getElementById('avgWait');
+                    if (avgWaitEl) avgWaitEl.textContent = Math.round(stats.avg_wait_time || 0) + ' min';
+
+                    // Update Revenue (Rupees)
+                    const totalRevenueEl = document.getElementById('totalRevenue');
+                    if (totalRevenueEl) {
+                        const revenue = stats.total_revenue || 0;
+                        totalRevenueEl.textContent = 'Rs. ' + revenue.toLocaleString('en-IN');
+                    }
+
+                    // Update Time Saved
+                    const timeSavedEl = document.getElementById('timeSaved');
+                    if (timeSavedEl) timeSavedEl.textContent = (stats.time_saved || 0) + ' hrs';
+
+                    // Update Quick Stats
+                    const staffEfficiencyEl = document.getElementById('staffEfficiency');
+                    if (staffEfficiencyEl) staffEfficiencyEl.textContent = stats.tokens_per_staff || 0;
+
+                    const retentionRateEl = document.getElementById('retentionRate');
+                    if (retentionRateEl) retentionRateEl.textContent = (stats.retention_rate || 0) + '%';
+
+                    const elderServedEl = document.getElementById('elderServed');
+                    if (elderServedEl) elderServedEl.textContent = (stats.elders_assisted || 0).toLocaleString();
+
+                    // Update CSAT (if we adds a dynamic indicator)
+                    console.log(`[DEBUG] CSAT Score: ${stats.customer_satisfaction}`);
+                } else {
+                    // Fail gracefully - clear loaders with defaults
+                    clearStuckLoaders();
+                }
+            } catch (error) {
+                console.error('[DEBUG] Error loading stats:', error);
+                clearStuckLoaders();
+            }
+        }
+
+        // Helper to clear spinners if data fails
+        function clearStuckLoaders() {
+            document.querySelectorAll('.stat-value').forEach(el => {
+                if (el.innerHTML.includes('fa-spinner')) {
+                    el.textContent = '0';
+                }
+            });
+        }
+
+        // Load recent activity feed
+        async function loadActivityFeed() {
+            try {
+                // Fetch unified activities from new endpoint
+                const response = await API.Analytics.getActivities({ limit: 5 });
+                const tbody = document.getElementById('activityTable');
+                if (!tbody) return;
+
+                if (response && response.ok && response.data.activities && response.data.activities.length > 0) {
+                    // Clear existing rows
+                    tbody.innerHTML = '';
+                    const activities = response.data.activities;
+
+                    activities.forEach(activity => {
+                        const row = document.createElement('tr');
+                        const time = formatTimeAgo(activity.timestamp);
+
+                        // Icon based on type
+                        let icon = '<i class="fas fa-circle text-secondary"></i>';
+                        if (activity.type === 'appointment') icon = '<i class="fas fa-calendar-check text-primary"></i>';
+                        else if (activity.type === 'queue_join') icon = '<i class="fas fa-ticket text-info"></i>';
+                        else if (activity.type === 'staff_action') icon = '<i class="fas fa-user-tie text-success"></i>';
+
+                        // Status badge color
+                        let statusClass = 'bg-secondary';
+                        const status = (activity.status || '').toLowerCase();
+                        if (['confirmed', 'serving', 'completed'].includes(status)) statusClass = 'bg-success';
+                        else if (['pending', 'waiting'].includes(status)) statusClass = 'bg-warning';
+                        else if (['cancelled', 'no_show'].includes(status)) statusClass = 'bg-danger';
+
+                        row.innerHTML = `
+                            <td>${time}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    ${icon}
+                                    <span>${activity.title || 'Activity'}</span>
+                                </div>
+                            </td>
+                            <td>${activity.subtitle || 'Details'}</td>
+                            <td><span class="badge ${statusClass}">${activity.status || 'Unknown'}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    // Show dummy data if no real activities yet
+                    loadDummyActivities();
+                }
+            } catch (error) {
+                console.error('Error loading activity feed:', error);
+                loadDummyActivities();
+            }
+        }
+
+        // Show all activities in modal
+        async function showAllActivities() {
+            const modalHtml = `
+                <div class="modal fade" id="activitiesModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">All Activities</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="bg-light sticky-top">
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Activity</th>
+                                                <th>Details</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="allActivitiesBody">
+                                            <tr><td colspan="4" class="text-center p-4"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if any
+            const existingModal = document.getElementById('activitiesModal');
+            if (existingModal) existingModal.remove();
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('activitiesModal'));
+            modal.show();
+
+            try {
+                // Fetch more activities
+                const response = await API.Analytics.getActivities({ limit: 50 });
+                const tbody = document.getElementById('allActivitiesBody');
+
+                if (response && response.ok && response.data.activities) {
+                    const activities = response.data.activities;
+                    tbody.innerHTML = '';
+
+                    if (activities.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4">No activities found</td></tr>';
+                        return;
+                    }
+
+                    activities.forEach(activity => {
+                        // Same rendering logic as main feed but more detailed
+                        const time = new Date(activity.timestamp).toLocaleString();
+
+                        let icon = '<i class="fas fa-circle text-secondary"></i>';
+                        if (activity.type === 'appointment') icon = '<i class="fas fa-calendar-check text-primary"></i>';
+                        else if (activity.type === 'queue_join') icon = '<i class="fas fa-ticket text-info"></i>';
+                        else if (activity.type === 'staff_action') icon = '<i class="fas fa-user-tie text-success"></i>';
+
+                        let statusClass = 'bg-secondary';
+                        if (['confirmed', 'serving', 'completed'].includes(activity.status)) statusClass = 'bg-success';
+                        else if (['pending', 'waiting'].includes(activity.status)) statusClass = 'bg-warning';
+                        else if (['cancelled', 'no_show'].includes(activity.status)) statusClass = 'bg-danger';
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="text-nowrap">${time}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    ${icon}
+                                    <span class="fw-medium">${activity.title}</span>
+                                </div>
+                            </td>
+                            <td>${activity.subtitle}</td>
+                            <td><span class="badge ${statusClass}">${activity.status}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                document.getElementById('allActivitiesBody').innerHTML = `<tr><td colspan="4" class="text-center text-danger">Failed to load activities</td></tr>`;
+            }
+        }
+
+        // Helper: Format time ago
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " min ago";
+            if (seconds < 10) return "Just now";
+            return Math.floor(seconds) + " sec ago";
+        }
+
+        // Fallback dummy data
+        function loadDummyActivities() {
+            const tbody = document.getElementById('activityTable');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td>2 min ago</td>
+                        <td><div class="d-flex align-items-center gap-2"><i class="fas fa-ticket text-info"></i><span>Token A045 Generated</span></div></td>
+                        <td>User joined Hospital queue</td>
+                        <td><span class="badge bg-warning">waiting</span></td>
+                    </tr>
+                    <tr>
+                         <td>5 min ago</td>
+                        <td><div class="d-flex align-items-center gap-2"><i class="fas fa-user-tie text-success"></i><span>Token B012 Called</span></div></td>
+                        <td>Staff called User at Counter 3</td>
+                        <td><span class="badge bg-success">serving</span></td>
+                    </tr>
+                    <tr>
+                         <td>8 min ago</td>
+                        <td><div class="d-flex align-items-center gap-2"><i class="fas fa-calendar-check text-primary"></i><span>New Appointment</span></div></td>
+                        <td>User booked for Bank - Savings</td>
+                        <td><span class="badge bg-success">confirmed</span></td>
+                    </tr>
+                    <tr>
+                         <td>12 min ago</td>
+                        <td><div class="d-flex align-items-center gap-2"><i class="fas fa-user-tie text-success"></i><span>Token C005 Completed</span></div></td>
+                        <td>Service completed for User at Counter 1</td>
+                        <td><span class="badge bg-success">completed</span></td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Load top performers
+        async function loadTopPerformers() {
+            try {
+                const staffRes = await API.Staff.getAll();
+                const tbody = document.getElementById('staffTable');
+                if (!tbody) return;
+
+                if (staffRes && staffRes.ok && staffRes.data && Array.isArray(staffRes.data.staff)) {
+                    tbody.innerHTML = '';
+                    const staff = staffRes.data.staff;
+
+                    // Sort by tokens served
+                    const topStaff = staff
+                        .sort((a, b) => (b.tokens_served || 0) - (a.tokens_served || 0))
+                        .slice(0, 5);
+
+                    topStaff.forEach(member => {
+                        const row = document.createElement('tr');
+                        const name = member.user?.name || member.name || 'Staff Member';
+                        const tokensServed = member.tokens_served || 0;
+                        const rating = member.rating || 5.0;
+
+                        row.innerHTML = `
+                            <td>${name}</td>
+                            <td>${tokensServed}</td>
+                            <td><i class="fas fa-star text-warning"></i> ${rating}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading top performers:', error);
+            }
+        }
+
+        // Initialize charts with real data
+        async function initCharts() {
+            try {
+                const range = document.getElementById('dateRange')?.value || 'week';
+                const historyRes = await API.Analytics.getHistory({ range: range });
+
+                let activityData = {
+                    labels: [],
+                    tokensServed: [],
+                    appointments: []
+                };
+
+                if (historyRes && historyRes.ok && Array.isArray(historyRes.data)) {
+                    const historyData = historyRes.data;
+                    activityData.labels = historyData.map(d => d.label || d.date || '');
+                    activityData.tokensServed = historyData.map(d => d.tokens || 0);
+                    activityData.appointments = historyData.map(d => d.appointments || 0);
+                }
+
+                // Update chart subtitle
+                const labelMap = { 'today': 'Today', 'week': 'This Week', 'month': 'This Month', 'year': 'This Year' };
+                const chartLabel = document.getElementById('chartTimeframeLabel');
+                if (chartLabel) chartLabel.textContent = `Showing data for ${labelMap[range] || 'This Month'}`;
+
+                // Clear existing charts
+                if (activityChart) activityChart.destroy();
+                if (serviceChart) serviceChart.destroy();
+
+                // Activity Chart
+                const activityCtx = document.getElementById('activityChart');
+                if (activityCtx) {
+                    activityChart = new Chart(activityCtx, {
+                        type: 'line',
+                        data: {
+                            labels: activityData.labels,
+                            datasets: [
+                                {
+                                    label: 'Tokens Served',
+                                    data: activityData.tokensServed,
+                                    borderColor: 'rgba(139, 92, 246, 1)',
+                                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                    fill: true,
+                                    tension: 0.4
+                                },
+                                {
+                                    label: 'Appointments',
+                                    data: activityData.appointments,
+                                    borderColor: 'rgba(57, 255, 20, 1)',
+                                    backgroundColor: 'rgba(57, 255, 20, 0.1)',
+                                    fill: true,
+                                    tension: 0.4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'top' }
+                            },
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
+                }
+
+                // Service distribution chart
+                const servicesRes = await API.Analytics.getByService({ timeframe: range, groupBy: 'sector' });
+                let serviceData = {
+                    labels: ['Hospital', 'Bank', 'Government', 'Restaurant'],
+                    data: [0, 0, 0, 0]
+                };
+
+                if (servicesRes && servicesRes.ok && Array.isArray(servicesRes.data) && servicesRes.data.length > 0) {
+                    const sectors = servicesRes.data;
+                    serviceData.labels = sectors.map(s => s.name);
+                    serviceData.data = sectors.map(s => s.count || 0);
+                }
+
+                const serviceCtx = document.getElementById('serviceChart');
+                if (serviceCtx) {
+                    serviceChart = new Chart(serviceCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: serviceData.labels,
+                            datasets: [{
+                                data: serviceData.data,
+                                backgroundColor: [
+                                    'rgba(16, 185, 129, 0.8)', // Hospital (Green)
+                                    'rgba(74, 144, 226, 0.8)', // Bank (Blue)
+                                    'rgba(245, 158, 11, 0.8)', // Government (Orange)
+                                    'rgba(236, 72, 153, 0.8)', // Restaurant (Pink)
+                                    'rgba(107, 114, 128, 0.8)'  // Other
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        }
+
+        // Refresh dashboard data
+        async function refreshDashboard() {
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadActivityFeed(),
+                    initCharts()
+                ]);
+                console.log('Dashboard refreshed at', new Date().toLocaleTimeString());
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
+            }
+        }
+
+        // Start auto-refresh
+        function startAutoRefresh() {
+            // Refresh every 30 seconds
+            refreshInterval = setInterval(refreshDashboard, 30000);
+
+            // Pause when tab is hidden
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    clearInterval(refreshInterval);
+                } else {
+                    refreshDashboard();
+                    refreshInterval = setInterval(refreshDashboard, 30000);
+                }
+            });
+        }
+
+        // Export report
+        async function exportReport(format = 'csv') {
+            const range = document.getElementById('dateRange')?.value || 'week';
+            const token = Auth.getToken();
+
+            if (format === 'csv') {
+                Toast.info(`Downloading CSV report for ${range}...`);
+                const url = `${API_BASE_URL}/analytics/export?range=${range}&format=${format}&token=${token}`;
+                window.location.href = url;
+                return;
+            }
+
+            if (format === 'pdf') {
+                Toast.info('Generating PDF Report...');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add Title
+                doc.setFontSize(22);
+                doc.setTextColor(40, 42, 54);
+                doc.text('QueueSense', 14, 22);
+
+                doc.setFontSize(16);
+                doc.setTextColor(139, 92, 246); // Theme Purple
+                doc.text('Administrative Performance Report', 14, 32);
+
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(`Re: ${range.charAt(0).toUpperCase() + range.slice(1)}`, 14, 42);
+                doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 48);
+
+                // Stats Summary Table
+                const statsData = [
+                    ['Tokens Served', document.getElementById('totalTokens').textContent],
+                    ['Avg Wait Time', document.getElementById('avgWait').textContent],
+                    ['Revenue', document.getElementById('totalRevenue').textContent.replace('₹', 'Rs.')],
+                    ['Time Saved', document.getElementById('timeSaved').textContent],
+                    ['Retention Rate', document.getElementById('retentionRate').textContent]
+                ];
+
+                doc.autoTable({
+                    startY: 60,
+                    head: [['Metric', 'Value']],
+                    body: statsData,
+                    theme: 'grid',
+                    headStyles: { fillColor: [74, 144, 226] }
+                });
+
+                // Recent Activity Table
+                doc.setFontSize(14);
+                doc.setTextColor(40, 42, 54);
+                doc.text('Recent Activity Summary', 14, doc.lastAutoTable.finalY + 15);
+
+                const tableRows = [];
+                const rows = document.querySelectorAll('#activityTable tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 3) {
+                        tableRows.push([
+                            cells[0].textContent,
+                            cells[1].textContent,
+                            cells[2].textContent,
+                            cells[3].textContent.trim()
+                        ]);
+                    }
+                });
+
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 20,
+                    head: [['Time', 'Activity', 'Details', 'Status']],
+                    body: tableRows,
+                    theme: 'striped',
+                    headStyles: { fillColor: [139, 92, 246] }
+                });
+
+                doc.save(`queuesense_dashboard_${new Date().getTime()}.pdf`);
+                Toast.success('PDF Report Exported Successfully');
+            }
+        }
+
+        // Save chart as image (JPEG)
+        function saveAsImage() {
+            const canvas = document.getElementById('activityChart');
+            if (canvas) {
+                Toast.info('Capturing activity chart...');
+                const link = document.createElement('a');
+                link.download = `queuesense_activity_${new Date().getTime()}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 1.0);
+                link.click();
+            } else {
+                Toast.error('Chart not found for capture');
+            }
+        }
+
+        // Handle date range change
+        document.getElementById('dateRange')?.addEventListener('change', async () => {
+            showLoading();
+            await Promise.all([
+                initCharts(),
+                loadStats()
+            ]);
+            hideLoading();
+        });
+
+        // Logout
+        function logout() {
+            Modal.confirm('Are you sure you want to logout?', () => {
+                Auth.logout();
+            });
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) clearInterval(refreshInterval);
+        });
+    </script>
+</body>
+
+</html>

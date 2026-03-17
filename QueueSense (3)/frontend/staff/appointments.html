@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Appointments Management
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - QueueSense</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        :root {
+            --elder-accent: #2563eb;
+            --elder-card-bg: #ffffff;
+            --elder-panel-blur: none;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-page: #f8fafc;
+            --sidebar-dark: #0f172a;
+            --radius-xl: 16px;
+            --shadow-premium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-dark);
+            padding: 2rem 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 3rem;
+            max-width: 1400px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 3.5rem;
+        }
+
+        .breadcrumb {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--elder-accent);
+        }
+
+        .dashboard-header h1 {
+            color: var(--text-dark);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .enterprise-card {
+            background: var(--elder-card-bg);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .enterprise-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-premium);
+            border-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .summary-card {
+            text-align: left;
+            position: relative;
+        }
+
+        .summary-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .icon-blue {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+        }
+
+        .icon-slate {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+        }
+
+        .icon-dark {
+            background: rgba(15, 23, 42, 0.1);
+            color: #0f172a;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0;
+        }
+
+        .summary-trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .search-container {
+            position: relative;
+            width: 320px;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            padding-left: 3rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            height: 48px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            border-color: var(--elder-accent);
+            width: 380px;
+        }
+
+        .status-badge {
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 1.25rem;
+            border-radius: 100px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-width: 1px;
+            border-style: solid;
+        }
+
+        .badge-scheduled {
+            background: rgba(245, 158, 11, 0.08);
+            color: #d97706;
+            border-color: rgba(245, 158, 11, 0.1);
+        }
+
+        .badge-checked-in {
+            background: rgba(37, 99, 235, 0.08);
+            color: #2563eb;
+            border-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .badge-completed {
+            background: rgba(16, 185, 129, 0.08);
+            color: #059669;
+            border-color: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Sidebar Styles Refinement */
+        .sidebar-brand {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-brand i {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            color: #94a3b8;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .sidebar-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-nav-item.active {
+            color: #fff;
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .sidebar-nav-item i {
+            font-size: 1.1rem;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-nav-item:hover i {
+            transform: translateX(3px);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            color: #ef4444;
+            background: none;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-bolt fa-lg"></i>
+                <span>QueueSense</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="feather-grid fas fa-th-large"></i><span>Dashboard</span>
+                </a>
+                <a href="queue-management.html" class="sidebar-nav-item">
+                    <i class="fas fa-users-cog"></i><span>Management</span>
+                </a>
+                <a href="elder-assist.html" class="sidebar-nav-item">
+                    <i class="fas fa-heart"></i><span>Elder Assist</span>
+                </a>
+                <a href="appointments.html" class="sidebar-nav-item active">
+                    <i class="fas fa-calendar-check"></i><span>Appointments</span>
+                </a>
+                <a href="analytics.html" class="sidebar-nav-item">
+                    <i class="fas fa-chart-line"></i><span>Analytics</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header animate-fade-in">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">Staff</li>
+                        <li class="breadcrumb-item active">Appointments</li>
+                    </ol>
+                </nav>
+                <div class="d-flex justify-content-between align-items-end">
+                    <div>
+                        <h1 class="h1 fw-bold mb-1">Appointment Hub</h1>
+                        <p class="text-muted mb-0">Monitor schedules, verify arrivals, and track history.</p>
+                    </div>
+                    <div class="d-flex gap-3 align-items-center">
+                        <div class="search-container shadow-sm d-none d-lg-block">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control search-input" placeholder="Search patient or ID..."
+                                id="searchBar" onkeyup="filterLocal()">
+                        </div>
+                        <div class="input-group shadow-sm" style="width: 220px;">
+                            <span class="input-group-text bg-white border-end-0"><i
+                                    class="fas fa-filter text-primary"></i></span>
+                            <input type="date" class="form-control border-start-0 ps-0 fw-bold" id="dateFilter"
+                                onchange="loadAppointments()">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Summary -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="enterprise-card summary-card cursor-pointer animate-fade-in"
+                        onclick="setQuickDate('today')">
+                        <div class="summary-icon icon-blue"><i class="fas fa-calendar-day"></i></div>
+                        <div class="summary-label">SCHEDULED TODAY</div>
+                        <h2 class="summary-value text-dark" id="countToday">--</h2>
+                        <div class="summary-trend trend-up"><i class="fas fa-arrow-up"></i> 12% from yesterday</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="enterprise-card summary-card cursor-pointer animate-fade-in"
+                        style="animation-delay: 0.1s;" onclick="setQuickDate('yesterday')">
+                        <div class="summary-icon icon-slate"><i class="fas fa-check-double"></i></div>
+                        <div class="summary-label">COMPLETED YESTERDAY</div>
+                        <h2 class="summary-value text-muted" id="countYesterday">--</h2>
+                        <div class="summary-trend"><i class="fas fa-info-circle"></i> Daily target met</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="enterprise-card summary-card cursor-pointer animate-fade-in"
+                        style="animation-delay: 0.2s;" onclick="setQuickDate('last_week')">
+                        <div class="summary-icon icon-dark"><i class="fas fa-chart-area"></i></div>
+                        <div class="summary-label">LAST 7 DAYS VOLUME</div>
+                        <h2 class="summary-value text-dark" id="countLastWeek">--</h2>
+                        <div class="summary-trend trend-up"><i class="fas fa-arrow-up"></i> 8.4% growth</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="appointmentsList">
+                <!-- Populated via JS -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isStaff()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateFilter').value = today;
+
+            await loadSummary();
+            loadAppointments();
+
+            // Refresh on tab focus
+            window.addEventListener('focus', () => {
+                loadSummary();
+                loadAppointments();
+            });
+        });
+
+        async function loadSummary() {
+            try {
+                const resp = await API.Appointments.getAll({}); // Get all to count
+                if (resp.ok) {
+                    const apps = resp.data.appointments || [];
+                    const today = new Date().toISOString().split('T')[0];
+                    const yesterdayDate = new Date();
+                    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+                    const yesterday = yesterdayDate.toISOString().split('T')[0];
+                    const lastWeek = new Date();
+                    lastWeek.setDate(lastWeek.getDate() - 7);
+
+                    const countScheduled = apps.filter(a => a.appointment_date === today && a.status === 'scheduled').length;
+                    const countCompleted = apps.filter(a => a.appointment_date === yesterday && a.status === 'completed').length;
+                    const countTotalLastWeek = apps.filter(a => new Date(a.appointment_date) >= lastWeek).length;
+
+                    document.getElementById('countToday').innerText = countScheduled;
+                    document.getElementById('countYesterday').innerText = countCompleted;
+                    document.getElementById('countLastWeek').innerText = countTotalLastWeek;
+                }
+            } catch (e) {
+                console.error('[Appointments] Summary load error:', e);
+            }
+        }
+
+        function setQuickDate(period) {
+            const picker = document.getElementById('dateFilter');
+            const today = new Date();
+            if (period === 'today') {
+                picker.value = today.toISOString().split('T')[0];
+            } else if (period === 'yesterday') {
+                today.setDate(today.getDate() - 1);
+                picker.value = today.toISOString().split('T')[0];
+            } else if (period === 'last_week') {
+                // For last week, we'll just show the last week's start but actually it's a filter
+                // In a real app, this might open a different view, but we'll set it to 7 days ago
+                today.setDate(today.getDate() - 7);
+                picker.value = today.toISOString().split('T')[0];
+            }
+            loadAppointments();
+        }
+
+        let allAppointments = []; // Local cache for filtering
+
+        async function loadAppointments() {
+            const date = document.getElementById('dateFilter').value;
+            const container = document.getElementById('appointmentsList');
+
+            try {
+                const resp = await API.Appointments.getAll({ date });
+                if (resp.ok) {
+                    allAppointments = resp.data.appointments || [];
+                    renderAppointments(allAppointments);
+                } else {
+                    container.innerHTML = `<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-exclamation-circle me-2"></i>Failed to load appointments: ${resp.data.error || 'Unknown error'}</div>`;
+                }
+            } catch (e) {
+                console.error('[Appointments] Load error:', e);
+                container.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-wifi me-2"></i>Connection error. Please try again.</div>';
+            }
+        }
+
+        function renderAppointments(apps) {
+            const container = document.getElementById('appointmentsList');
+            if (apps.length === 0) {
+                container.innerHTML = `
+                    <div class="enterprise-card p-5 text-center">
+                        <i class="fas fa-calendar-times fa-3x text-light mb-3 opacity-50"></i>
+                        <div class="h5 text-muted fw-bold">No active appointments found.</div>
+                        <p class="text-xs text-muted">Try adjusting your filters or date selection.</p>
+                        <button class="btn btn-outline-primary mt-3 btn-sm px-4" onclick="setQuickDate('today')">Return to Today</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            apps.forEach(app => {
+                const isCheckedIn = app.status === 'checked_in';
+                const isServed = app.status === 'completed';
+                const isElder = app.user_category === 'elder' || (app.user_name && app.user_name.toLowerCase().includes('elder'));
+                const icon = getServiceIcon(app.service_name);
+
+                let statusHtml = '';
+                if (isServed) {
+                    statusHtml = '<span class="status-badge badge-completed"><i class="fas fa-check-circle"></i>SERVED</span>';
+                } else if (isCheckedIn) {
+                    statusHtml = `
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <span class="status-badge badge-checked-in"><i class="fas fa-spinner fa-spin"></i>ACTIVE SESSION</span>
+                            <button class="btn btn-link btn-xs text-success text-decoration-none fw-bold p-0" style="font-size: 0.7rem;" onclick="serveAppointment(${app.appointment_id})">MARK AS SERVED</button>
+                        </div>`;
+                } else {
+                    statusHtml = `<button class="btn btn-primary px-4 py-2 rounded-pill shadow-sm fw-bold border-0" style="font-size:0.8rem; background: #2563eb;" onclick="checkIn(${app.appointment_id})">CHECK IN</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="enterprise-card d-flex justify-content-between align-items-center animate-fade-in" 
+                         style="${isServed ? 'opacity: 0.6; grayscale: 0.5;' : ''}">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="text-center" style="min-width: 90px; border-right: 2px solid #f1f5f9; padding-right: 1.5rem;">
+                                <div class="h4 fw-bold mb-0 text-dark" style="font-family:'JetBrains Mono'">${app.time_window_start.split(':').slice(0, 2).join(':')}</div>
+                                <div class="text-xs text-muted fw-bold opacity-75">START</div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="summary-icon mb-0" style="width:40px; height:40px; font-size: 1rem; background: #f8fafc; border: 1px solid #e2e8f0;">
+                                    <i class="${icon}"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="h5 mb-0 fw-bold text-dark">${app.user_name || 'Walk-in User'}</span>
+                                        ${isElder ? '<span class="badge bg-soft-primary text-primary border border-primary border-opacity-10 px-2 py-1" style="font-size: 0.6rem; letter-spacing:0.05em;">ELDER PRIORITY</span>' : ''}
+                                    </div>
+                                    <div class="text-muted small fw-medium">
+                                        <span class="text-primary">${app.service_name}</span> <span class="mx-1 opacity-25">•</span> <span class="opacity-75">ID: ${app.appointment_id}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ms-4">
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getServiceIcon(service) {
+            const s = (service || '').toLowerCase();
+            if (s.includes('hospital') || s.includes('medical')) return 'fas fa-hospital';
+            if (s.includes('bank') || s.includes('finance')) return 'fas fa-university';
+            if (s.includes('government') || s.includes('citizen')) return 'fas fa-landmark';
+            if (s.includes('railway') || s.includes('travel')) return 'fas fa-train';
+            return 'fas fa-user-clock';
+        }
+
+        function filterLocal() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filtered = allAppointments.filter(a =>
+                (a.user_name || '').toLowerCase().includes(query) ||
+                String(a.appointment_id).includes(query)
+            );
+            renderAppointments(filtered);
+        }
+
+        async function checkIn(id) {
+            try {
+                const r = await API.Appointments.checkIn(id);
+                if (r.ok) {
+                    await loadSummary();
+                    loadAppointments();
+                } else {
+                    alert('Check-in failed: ' + (r.data.error || 'Unknown error'));
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function serveAppointment(id) {
+            try {
+                const qResp = await API.Queue.getStatus(0, 0);
+                if (qResp.ok) {
+                    const allQueue = [
+                        ...(qResp.data.elder_queue || []),
+                        ...(qResp.data.normal_queue || []),
+                        ...(qResp.data.currently_serving || [])
+                    ];
+                    const entry = allQueue.find(x => x.app_id === id);
+                    if (entry) {
+                        const sResp = await API.Queue.markServed(entry.queue_type, entry.queue_id);
+                        if (sResp.ok) {
+                            await loadSummary();
+                            loadAppointments();
+                        } else {
+                            alert('Failed to mark as served');
+                        }
+                    } else {
+                        alert('Active queue entry not found for this appointment.');
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function logout() {
+            Modal.confirm('Are you sure you want to log out?', () => {
+                Auth.logout();
+                window.location.href = '../login.html';
+            });
+        }
+    </script>
+</body>
+
+</html>

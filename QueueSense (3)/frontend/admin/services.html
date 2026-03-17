@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Admin Services Management
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Services - Admin Panel</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        /* Admin Dashboard Styles */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .sidebar-nav-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        /* Category Cards Grid - 4 columns */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1400px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Category Card */
+        .category-card {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-header {
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .category-header.hospital {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-left: 4px solid #10b981;
+        }
+
+        .category-header.bank {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0.05) 100%);
+            border-left: 4px solid #4a90e2;
+        }
+
+        .category-header.restaurant {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+            border-left: 4px solid #ec4899;
+        }
+
+        .category-header.government {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .category-icon.hospital {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .category-icon.bank {
+            background: rgba(74, 144, 226, 0.15);
+            color: #4a90e2;
+        }
+
+        .category-icon.restaurant {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+        }
+
+        .category-icon.government {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .category-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .category-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .category-stats {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #eee;
+        }
+
+        .category-stat {
+            text-align: center;
+            flex: 1;
+        }
+
+        .category-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .category-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Services List */
+        .services-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .services-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .services-list::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-item:hover {
+            background: #f8fafc;
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .service-icon-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        .service-icon-small.hospital {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .service-icon-small.bank {
+            background: rgba(74, 144, 226, 0.1);
+            color: #4a90e2;
+        }
+
+        .service-icon-small.restaurant {
+            background: rgba(236, 72, 153, 0.1);
+            color: #ec4899;
+        }
+
+        .service-icon-small.government {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .service-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .service-code {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: #f0f0f0;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            margin-left: 0.5rem;
+        }
+
+        .service-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .service-status.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .service-status.inactive {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+        }
+
+        .btn-icon.edit {
+            background: rgba(74, 144, 226, 0.1);
+            color: #4a90e2;
+        }
+
+        .btn-icon.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-icon.edit:hover {
+            background: rgba(74, 144, 226, 0.2);
+        }
+
+        .btn-icon.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Add Service Button in Category */
+        .add-service-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border: 2px dashed #ddd;
+            border-radius: 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .add-service-btn:hover {
+            background: #f0f5ff;
+            border-color: var(--primary-purple);
+            color: var(--primary-purple);
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ff1744;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: var(--radius-md);
+            border: none;
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        .modal-header.hospital {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .modal-header.bank {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        }
+
+        .modal-header.restaurant {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        }
+
+        .modal-header.government {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .modal-header.edit-header {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        }
+
+        .modal-header.delete-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            padding: 0.625rem 0.875rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .invalid-feedback {
+            font-size: 0.8rem;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .custom-toast {
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+            min-width: 280px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .custom-toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .custom-toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .custom-toast i {
+            font-size: 1.25rem;
+        }
+
+        .custom-toast.success i {
+            color: #10b981;
+        }
+
+        .custom-toast.error i {
+            color: #ef4444;
+        }
+
+        /* Confirmation Modal */
+        .confirm-icon {
+            font-size: 4rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+
+        /* Empty state for category */
+        .empty-service {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-service i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-content i {
+            font-size: 3rem;
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services.html" class="sidebar-nav-item active">
+                    <i class="fas fa-cogs"></i>
+                    <span>Manage Services</span>
+                </a>
+                <a href="staff.html" class="sidebar-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Staff</span>
+                </a>
+                <a href="users.html" class="sidebar-nav-item">
+                    <i class="fas fa-user-group"></i>
+                    <span>Users</span>
+                </a>
+                <a href="analytics.html" class="sidebar-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="settings.html" class="sidebar-nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Manage Services</h1>
+                    <p class="text-muted">Manage services organized by category</p>
+                </div>
+            </header>
+
+            <!-- Categories Grid - 4 Columns -->
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- Hospital Category -->
+                <div class="category-card" data-category="hospital">
+                    <div class="category-header hospital">
+                        <div class="category-icon hospital">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Hospital</h3>
+                            <p>Healthcare Services</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="hospital-total">0</div>
+                            <div class="category-stat-label">Services</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="hospital-active">0</div>
+                            <div class="category-stat-label">Active</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="hospital-waiting">0</div>
+                            <div class="category-stat-label">Waiting</div>
+                        </div>
+                    </div>
+                    <ul class="services-list" id="hospital-services">
+                        <!-- Services loaded dynamically -->
+                    </ul>
+                    <button class="add-service-btn" onclick="openAddModal('hospital')">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+
+                <!-- Bank Category -->
+                <div class="category-card" data-category="bank">
+                    <div class="category-header bank">
+                        <div class="category-icon bank">
+                            <i class="fas fa-building-columns"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Bank</h3>
+                            <p>Financial Services</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="bank-total">0</div>
+                            <div class="category-stat-label">Services</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="bank-active">0</div>
+                            <div class="category-stat-label">Active</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="bank-waiting">0</div>
+                            <div class="category-stat-label">Waiting</div>
+                        </div>
+                    </div>
+                    <ul class="services-list" id="bank-services">
+                        <!-- Services loaded dynamically -->
+                    </ul>
+                    <button class="add-service-btn" onclick="openAddModal('bank')">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+
+                <!-- Restaurant Category -->
+                <div class="category-card" data-category="restaurant">
+                    <div class="category-header restaurant">
+                        <div class="category-icon restaurant">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Restaurant</h3>
+                            <p>Food & Dining Services</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="restaurant-total">0</div>
+                            <div class="category-stat-label">Services</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="restaurant-active">0</div>
+                            <div class="category-stat-label">Active</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="restaurant-waiting">0</div>
+                            <div class="category-stat-label">Waiting</div>
+                        </div>
+                    </div>
+                    <ul class="services-list" id="restaurant-services">
+                        <!-- Services loaded dynamically -->
+                    </ul>
+                    <button class="add-service-btn" onclick="openAddModal('restaurant')">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+
+                <!-- Government Category -->
+                <div class="category-card" data-category="government">
+                    <div class="category-header government">
+                        <div class="category-icon government">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Government</h3>
+                            <p>Administrative Services</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="government-total">0</div>
+                            <div class="category-stat-label">Services</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="government-active">0</div>
+                            <div class="category-stat-label">Active</div>
+                        </div>
+                        <div class="category-stat">
+                            <div class="category-stat-value" id="government-waiting">0</div>
+                            <div class="category-stat-label">Waiting</div>
+                        </div>
+                    </div>
+                    <ul class="services-list" id="government-services">
+                        <!-- Services loaded dynamically -->
+                    </ul>
+                    <button class="add-service-btn" onclick="openAddModal('government')">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Add Service Modal -->
+    <div class="modal fade" id="addServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="addModalHeader">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Add New Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addServiceForm" novalidate>
+                        <input type="hidden" id="addServiceCategory" value="">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Service Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="addServiceName"
+                                    placeholder="e.g., OPD, Fixed Deposit, Dine In" required>
+                                <div class="invalid-feedback">Please enter a service name (min 3 characters)</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Service Code</label>
+                                <input type="text" class="form-control" id="addServiceCode" maxlength="5" readonly
+                                    style="text-transform: uppercase; background-color: #e9ecef; font-weight: bold; cursor: not-allowed;">
+                                <small class="text-muted">Fixed: H (Hospital), B (Bank), R (Restaurant), G
+                                    (Govt)</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Icon</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="addServiceIconPreview">
+                                        <i class="fas fa-hospital"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="addServiceIconDisplay" readonly
+                                        style="background-color: #e9ecef;">
+                                    <input type="hidden" id="addServiceIcon">
+                                </div>
+                                <small class="text-muted">Set automatically based on category</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="addServiceStatus">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="addServiceDescription" rows="2"
+                                placeholder="Brief description of the service"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Service Duration (min)</label>
+                                <input type="number" class="form-control" id="addServiceDuration" value="20" min="5"
+                                    max="120">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Elder Priority</label>
+                                <input type="number" class="form-control" id="addElderWeight" value="3" min="1"
+                                    max="10">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Appointment Priority</label>
+                                <input type="number" class="form-control" id="addAppointmentWeight" value="2" min="1"
+                                    max="10">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="addServiceBtn" onclick="addService()">
+                        <i class="fas fa-save"></i> Add Service
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Service Modal -->
+    <div class="modal fade" id="editServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header edit-header">
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editServiceForm" novalidate>
+                        <input type="hidden" id="editServiceId">
+                        <input type="hidden" id="editServiceCategoryHidden">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Service Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editServiceName" required>
+                                <div class="invalid-feedback">Please enter a service name</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Service Code</label>
+                                <input type="text" class="form-control" id="editServiceCode" readonly disabled>
+                                <small class="text-muted">Cannot be changed</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="editServiceCategory">
+                                    <option value="hospital">Hospital</option>
+                                    <option value="bank">Bank</option>
+                                    <option value="restaurant">Restaurant</option>
+                                    <option value="government">Government</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Icon</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="editServiceIconPreview">
+                                        <i class="fas fa-hospital"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="editServiceIconDisplay" readonly
+                                        style="background-color: #e9ecef;">
+                                    <input type="hidden" id="editServiceIcon">
+                                </div>
+                                <small class="text-muted">Set automatically based on category</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="editServiceStatus">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="editServiceDescription" rows="2"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Service Duration (min)</label>
+                                <input type="number" class="form-control" id="editServiceDuration" min="5" max="120">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Elder Priority</label>
+                                <input type="number" class="form-control" id="editElderWeight" min="1" max="10">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Appointment Priority</label>
+                                <input type="number" class="form-control" id="editAppointmentWeight" min="1" max="10">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateService()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header delete-header">
+                    <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Delete Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-exclamation-triangle confirm-icon"></i>
+                    <h4>Are you sure?</h4>
+                    <p class="text-muted mb-0">You are about to delete <strong id="deleteServiceName"></strong>.</p>
+                    <p class="text-muted">This action cannot be undone.</p>
+                    <input type="hidden" id="deleteServiceId">
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteService()">
+                        <i class="fas fa-trash"></i> Delete Service
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        // Service data store
+        let servicesData = [];
+        let categorizedServices = {
+            hospital: [],
+            bank: [],
+            restaurant: [],
+            government: []
+        };
+
+        // Category mapping based on service name/description keywords
+        const categoryKeywords = {
+            hospital: ['hospital', 'opd', 'health', 'medical', 'clinic', 'doctor', 'patient', 'checkup', 'diagnosis', 'treatment', 'elderly health'],
+            bank: ['bank', 'saving', 'deposit', 'loan', 'account', 'credit', 'debit', 'transfer', 'fixed deposit', 'investment', 'asset', 'finance'],
+            restaurant: ['restaurant', 'food', 'dine', 'dining', 'cafe', 'meal', 'order', 'takeaway', 'delivery', 'kitchen', 'menu'],
+            government: ['government', 'govt', 'pension', 'tax', 'legal', 'certificate', 'license', 'permit', 'document', 'official', 'citizen', 'scheme', 'disbursement', 'benefit', 'retirement', 'digital life']
+        };
+
+        // Category icons
+        const categoryIcons = {
+            hospital: 'fa-hospital',
+            bank: 'fa-building-columns',
+            restaurant: 'fa-utensils',
+            government: 'fa-landmark'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check auth
+            if (!Auth.isAdmin()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Load services
+            await loadServices();
+        });
+
+        // Show loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Determine category for a service
+        function determineCategory(service) {
+            // Prioritize manually assigned sector from database
+            if (service.sector) {
+                const sector = service.sector.toLowerCase();
+                const validSectors = ['hospital', 'bank', 'restaurant', 'government'];
+                if (validSectors.includes(sector)) {
+                    return sector;
+                }
+            }
+
+            const name = (service.service_name || '').toLowerCase();
+            const desc = (service.description || '').toLowerCase();
+            const combined = name + ' ' + desc;
+
+            // Check each category's keywords
+            for (const [category, keywords] of Object.entries(categoryKeywords)) {
+                for (const keyword of keywords) {
+                    if (combined.includes(keyword)) {
+                        return category;
+                    }
+                }
+            }
+
+            // Default based on service code
+            const code = (service.service_code || '').toUpperCase();
+            if (code === 'H') return 'hospital';
+            if (code === 'B') return 'bank';
+            if (code === 'R') return 'restaurant';
+            if (code === 'G') return 'government';
+
+            // Default to government for remaining services
+            return 'government';
+        }
+
+        let sectorStats = {}; // To store real waiting counts per sector
+
+        // Load services from API
+        async function loadServices() {
+            showLoading();
+
+            try {
+                // Fetch services and sector stats in parallel
+                const [servicesRes, statsRes] = await Promise.all([
+                    API.Services.getAll(),
+                    API.Analytics.getByService({ groupBy: 'sector' })
+                ]);
+
+                if (servicesRes && servicesRes.ok) {
+                    servicesData = servicesRes.data.services || [];
+
+                    // Store sector stats for "Waiting" count display
+                    sectorStats = {};
+                    if (statsRes && statsRes.ok && Array.isArray(statsRes.data)) {
+                        statsRes.data.forEach(stat => {
+                            sectorStats[stat.id] = stat.waiting_count || 0;
+                        });
+                    }
+
+                    // Categorize services
+                    categorizeServices();
+
+                    // Render all categories
+                    renderAllCategories();
+                } else {
+                    throw new Error(servicesRes?.data?.error || 'Failed to load services');
+                }
+            } catch (error) {
+                console.error('Error loading services:', error);
+                showToast('Failed to load services. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Categorize services into 4 categories
+        function categorizeServices() {
+            // Reset categories
+            categorizedServices = {
+                hospital: [],
+                bank: [],
+                restaurant: [],
+                government: []
+            };
+
+            // Categorize each service
+            servicesData.forEach(service => {
+                const category = determineCategory(service);
+                service._category = category; // Store category for later use
+                categorizedServices[category].push(service);
+            });
+        }
+
+        // Render all categories
+        function renderAllCategories() {
+            for (const category of Object.keys(categorizedServices)) {
+                renderCategoryServices(category);
+                updateCategoryStats(category);
+            }
+        }
+
+        // Render services for a specific category
+        function renderCategoryServices(category) {
+            const listEl = document.getElementById(`${category}-services`);
+            const services = categorizedServices[category];
+
+            if (services.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-service">
+                        <i class="fas ${categoryIcons[category]}"></i>
+                        <p>No services added yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = services.map(service => `
+                <li class="service-item" data-service-id="${service.service_id}">
+                    <div class="service-info">
+                        <div class="service-icon-small ${category}">
+                            <i class="fas ${service.icon || categoryIcons[category]}"></i>
+                        </div>
+                        <span class="service-name">
+                            ${escapeHtml(service.service_name)}
+                            <span class="service-code">${service.service_code}</span>
+                        </span>
+                    </div>
+                    <span class="service-status ${service.is_active !== false ? 'active' : 'inactive'}">
+                        ${service.is_active !== false ? 'Active' : 'Inactive'}
+                    </span>
+                    <div class="service-actions">
+                        <button class="btn-icon edit" onclick="editService(${service.service_id})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon delete" onclick="deleteService(${service.service_id})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Update category statistics
+        function updateCategoryStats(category) {
+            const services = categorizedServices[category];
+            const total = services.length;
+            const active = services.filter(s => s.is_active !== false).length;
+            const waiting = sectorStats[category] || 0;
+
+            document.getElementById(`${category}-total`).textContent = total;
+            document.getElementById(`${category}-active`).textContent = active;
+            document.getElementById(`${category}-waiting`).textContent = waiting;
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Category display names
+        const categoryDisplayNames = {
+            hospital: 'Hospital',
+            bank: 'Bank',
+            restaurant: 'Restaurant',
+            government: 'Government'
+        };
+
+        // Category codes (fixed)
+        const categoryCodes = {
+            hospital: 'H',
+            bank: 'B',
+            restaurant: 'R',
+            government: 'G'
+        };
+
+        // Open Add Service Modal for a category
+        function openAddModal(category) {
+            // Set category
+            document.getElementById('addServiceCategory').value = category;
+
+            // Update modal header style
+            const header = document.getElementById('addModalHeader');
+            header.className = `modal-header ${category}`;
+
+            // Clear form first
+            document.getElementById('addServiceForm').reset();
+            document.getElementById('addServiceCategory').value = category;
+
+            // Set default icon based on category (read-only)
+            const icon = categoryIcons[category];
+            document.getElementById('addServiceIcon').value = icon;
+            document.getElementById('addServiceIconDisplay').value = categoryDisplayNames[category] + ' Icon';
+            document.getElementById('addServiceIconPreview').innerHTML = `<i class="fas ${icon}"></i>`;
+
+            // Set fixed service code based on category (H, B, R, G)
+            document.getElementById('addServiceCode').value = categoryCodes[category];
+
+            // Clear validation states
+            document.querySelectorAll('#addServiceForm .is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+
+            // Open modal
+            const modal = new bootstrap.Modal(document.getElementById('addServiceModal'));
+            modal.show();
+        }
+
+        // Service code is now fixed based on category, no auto-generation needed
+
+        // Validate add service form
+        function validateAddForm() {
+            const name = document.getElementById('addServiceName');
+
+            let isValid = true;
+
+            // Validate name (min 3 characters)
+            if (!name.value.trim() || name.value.trim().length < 3) {
+                name.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                name.classList.remove('is-invalid');
+            }
+
+            // Service code is fixed per category (H, B, R, G) - no uniqueness check needed
+            // All services in a category share the same code
+
+            return isValid;
+        }
+
+        // Add new service (without page refresh)
+        async function addService() {
+            if (!validateAddForm()) {
+                return;
+            }
+
+            const category = document.getElementById('addServiceCategory').value;
+
+            const serviceData = {
+                service_name: document.getElementById('addServiceName').value.trim(),
+                service_code: document.getElementById('addServiceCode').value.trim().toUpperCase(),
+                description: document.getElementById('addServiceDescription').value.trim() ||
+                    `${category.charAt(0).toUpperCase() + category.slice(1)} service`,
+                icon: document.getElementById('addServiceIcon').value,
+                service_duration: parseInt(document.getElementById('addServiceDuration').value) || 20,
+                elder_weight: parseInt(document.getElementById('addElderWeight').value) || 3,
+                appointment_weight: parseInt(document.getElementById('addAppointmentWeight').value) || 2,
+                is_active: document.getElementById('addServiceStatus').value === 'true',
+                sector: category
+            };
+
+            showLoading();
+
+            try {
+                const response = await API.Services.create(serviceData);
+
+                if (response && response.ok) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addServiceModal'));
+                    modal.hide();
+                    document.getElementById('addServiceForm').reset();
+
+                    // Reload data to ensure consistency (no page refresh, just API fetch)
+                    await loadServices();
+
+                    // Show success message
+                    showToast(`Service added successfully!`, 'success');
+                } else {
+                    throw new Error(response?.data?.error || 'Failed to add service');
+                }
+            } catch (error) {
+                console.error('Error adding service:', error);
+                showToast(error.message || 'Failed to add service. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update fields based on category in edit modal
+        function updateEditFields(category) {
+            const icon = categoryIcons[category];
+            document.getElementById('editServiceIcon').value = icon;
+            document.getElementById('editServiceIconDisplay').value = categoryDisplayNames[category] + ' Icon';
+            document.getElementById('editServiceIconPreview').innerHTML = `<i class="fas ${icon}"></i>`;
+            document.getElementById('editServiceCode').value = categoryCodes[category];
+
+            // Update modal header color
+            const header = document.querySelector('#editServiceModal .modal-header');
+            header.className = `modal-header ${category} edit-header`;
+        }
+
+        // Edit service - open modal with data
+        function editService(serviceId) {
+            const service = servicesData.find(s => s.service_id === serviceId);
+
+            if (!service) {
+                showToast('Service not found', 'error');
+                return;
+            }
+
+            // Populate form
+            document.getElementById('editServiceId').value = service.service_id;
+            document.getElementById('editServiceName').value = service.service_name;
+            document.getElementById('editServiceCode').value = service.service_code;
+            document.getElementById('editServiceDescription').value = service.description || '';
+            document.getElementById('editServiceDuration').value = service.service_duration || 20;
+            document.getElementById('editElderWeight').value = service.elder_weight || 3;
+            document.getElementById('editAppointmentWeight').value = service.appointment_weight || 2;
+            document.getElementById('editServiceStatus').value = service.is_active !== false ? 'true' : 'false';
+
+            // Set category and update fields
+            const category = service.sector || determineCategory(service);
+            document.getElementById('editServiceCategory').value = category;
+            document.getElementById('editServiceCategoryHidden').value = category;
+            updateEditFields(category);
+
+            // Add change listener to category select
+            const categorySelect = document.getElementById('editServiceCategory');
+            categorySelect.onchange = (e) => updateEditFields(e.target.value);
+
+            // Clear validation states HTML
+            document.querySelectorAll('#editServiceForm .is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+
+            // Open modal
+            const modal = new bootstrap.Modal(document.getElementById('editServiceModal'));
+            modal.show();
+        }
+
+        // Validate edit form
+        function validateEditForm() {
+            const name = document.getElementById('editServiceName');
+
+            if (!name.value.trim() || name.value.trim().length < 3) {
+                name.classList.add('is-invalid');
+                return false;
+            }
+
+            name.classList.remove('is-invalid');
+            return true;
+        }
+
+        // Update service (without page refresh)
+        async function updateService() {
+            if (!validateEditForm()) {
+                return;
+            }
+
+            const serviceId = parseInt(document.getElementById('editServiceId').value);
+            const oldCategory = document.getElementById('editServiceCategoryHidden').value;
+            const newCategory = document.getElementById('editServiceCategory').value;
+
+            const serviceData = {
+                service_name: document.getElementById('editServiceName').value.trim(),
+                service_code: document.getElementById('editServiceCode').value.trim(),
+                description: document.getElementById('editServiceDescription').value.trim(),
+                icon: document.getElementById('editServiceIcon').value,
+                service_duration: parseInt(document.getElementById('editServiceDuration').value) || 20,
+                elder_weight: parseInt(document.getElementById('editElderWeight').value) || 3,
+                appointment_weight: parseInt(document.getElementById('editAppointmentWeight').value) || 2,
+                is_active: document.getElementById('editServiceStatus').value === 'true',
+                sector: document.getElementById('editServiceCategory').value
+            };
+
+            showLoading();
+
+            try {
+                const response = await API.Services.update(serviceId, serviceData);
+
+                if (response && response.ok) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editServiceModal'));
+                    modal.hide();
+
+                    // Reload data to ensure consistency
+                    await loadServices();
+
+                    // Show success message
+                    showToast(`Service updated successfully!`, 'success');
+                } else {
+                    throw new Error(response?.data?.error || 'Failed to update service');
+                }
+            } catch (error) {
+                console.error('Error updating service:', error);
+                showToast(error.message || 'Failed to update service. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Delete service - open confirmation modal
+        function deleteService(serviceId) {
+            const service = servicesData.find(s => s.service_id === serviceId);
+            if (!service) return;
+
+            document.getElementById('deleteServiceId').value = serviceId;
+            document.getElementById('deleteServiceName').textContent = service.service_name;
+
+            const modal = new bootstrap.Modal(document.getElementById('deleteServiceModal'));
+            modal.show();
+        }
+
+        // Confirm delete service (without page refresh)
+        async function confirmDeleteService() {
+            const serviceId = parseInt(document.getElementById('deleteServiceId').value);
+            const service = servicesData.find(s => s.service_id === serviceId);
+            const category = service?._category || determineCategory(service);
+
+            showLoading();
+
+            try {
+                const response = await API.Services.delete(serviceId);
+
+                if (response && response.ok) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteServiceModal'));
+                    modal.hide();
+
+                    // Reload data to ensure consistency
+                    await loadServices();
+
+                    // Show success message
+                    showToast('Service deleted successfully', 'success');
+                } else {
+                    throw new Error(response?.data?.error || 'Failed to delete service');
+                }
+            } catch (error) {
+                console.error('Error deleting service:', error);
+                showToast(error.message || 'Failed to delete service. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                Auth.logout();
+            }
+        }
+
+        // Clear validation on input
+        document.querySelectorAll('.form-control, .form-select').forEach(input => {
+            input.addEventListener('input', function () {
+                this.classList.remove('is-invalid');
+            });
+        });
+    </script>
+</body>
+
+</html>

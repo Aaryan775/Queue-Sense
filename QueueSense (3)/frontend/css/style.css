@@ -1,0 +1,1080 @@
+/* =============================================
+   QueueSense - Main Stylesheet
+   Smart Queues. Human Care.
+   ============================================= */
+
+/* =============================================
+   CSS Variables - Design Tokens
+   Defines the core color scheme and spacing
+   ============================================= */
+:root {
+    /* Primary Colors */
+    --primary-blue: #4A90E2;
+    /* Main blue color for navigation */
+    --primary-purple: #8B5CF6;
+    /* Accent purple color */
+    --neon-green: #39FF14;
+    /* Neon green for CTAs and highlights */
+    --neon-green-dark: #32CD32;
+    /* Darker green for hover states */
+
+    /* Background Colors */
+    --dark-bg: #1a1a2e;
+    /* Dark background for sections */
+    --darker-bg: #16162a;
+    /* Even darker for cards on dark bg */
+    --light-bg: #ffffff;
+    /* Light background */
+    --light-gray: #f8f9fa;
+    /* Light gray for alternate sections */
+
+    /* Text Colors */
+    --text-dark: #1a1a2e;
+    /* Dark text on light backgrounds */
+    --text-light: #ffffff;
+    /* Light text on dark backgrounds */
+    --text-muted: #6c757d;
+    /* Muted text for secondary info */
+    --text-purple-light: #c4b5fd;
+    /* Light purple for dark backgrounds */
+
+    /* Gradient Definitions */
+    --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+    --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
+    --gradient-neon: linear-gradient(135deg, var(--neon-green) 0%, #00ff88 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2);
+    --shadow-neon: 0 0 20px rgba(57, 255, 20, 0.3);
+    --shadow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
+
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 50px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-xxl: 5rem;
+}
+
+/* =============================================
+   Reset and Base Styles
+   ============================================= */
+
+/* Apply border-box to all elements */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Remove default margins and set base font */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--light-bg);
+    overflow-x: hidden;
+}
+
+/* Smooth scrolling for the whole page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Remove default link styles */
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--transition-fast);
+}
+
+/* Remove list styles */
+ul,
+ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* =============================================
+   Typography
+   ============================================= */
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 var(--spacing-md);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* Hero heading - very large */
+h1 {
+    font-size: 3.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Section headings */
+h2 {
+    font-size: 2.5rem;
+}
+
+/* Subsection headings */
+h3 {
+    font-size: 1.75rem;
+}
+
+/* Card headings */
+h4 {
+    font-size: 1.25rem;
+}
+
+/* Paragraph spacing */
+p {
+    margin: 0 0 var(--spacing-md);
+}
+
+/* Highlight text with gradient */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Neon green text */
+.text-neon {
+    color: var(--neon-green);
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+}
+
+/* =============================================
+   Layout Components
+   ============================================= */
+
+/* Main container with max-width */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+/* Full-width sections */
+.section {
+    padding: var(--spacing-xxl) 0;
+}
+
+/* Dark section background */
+.section-dark {
+    background: var(--gradient-dark);
+    color: var(--text-light);
+}
+
+/* Light gray section background */
+.section-light {
+    background-color: var(--light-gray);
+}
+
+/* Flexbox row */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 calc(var(--spacing-md) * -1);
+}
+
+/* Flexbox column */
+.col {
+    flex: 1;
+    padding: 0 var(--spacing-md);
+}
+
+/* Grid layout for cards */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* =============================================
+   Navigation
+   ============================================= */
+
+/* Main navigation bar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md) 0;
+    transition: all var(--transition-normal);
+}
+
+/* Navigation container */
+.navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo styling */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+/* Logo icon */
+.navbar-brand i {
+    color: var(--neon-green);
+    font-size: 1.75rem;
+}
+
+/* Navigation links */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+/* Individual nav link */
+.nav-link {
+    font-weight: 500;
+    color: var(--text-dark);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+/* Nav link hover effect */
+.nav-link:hover {
+    color: var(--primary-purple);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+/* Dark navbar support */
+.navbar-dark .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.navbar-dark .nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-dark .navbar-brand {
+    color: #ffffff !important;
+}
+
+/* =============================================
+   Buttons
+   ============================================= */
+
+/* Base button styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+    pointer-events: none;
+}
+
+/* Primary button - neon green */
+.btn-primary {
+    background: var(--gradient-neon);
+    color: var(--dark-bg);
+    box-shadow: var(--shadow-neon);
+}
+
+/* Primary button hover */
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+}
+
+/* Secondary button - outlined */
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-purple);
+    border: 2px solid var(--primary-purple);
+}
+
+/* Secondary button hover */
+.btn-secondary:hover {
+    background: var(--primary-purple);
+    color: var(--text-light);
+    transform: translateY(-3px);
+}
+
+/* Dark button */
+.btn-dark {
+    background: var(--dark-bg);
+    color: var(--text-light);
+}
+
+/* Dark button hover */
+.btn-dark:hover {
+    background: var(--primary-purple);
+    transform: translateY(-3px);
+}
+
+/* Large button */
+.btn-lg {
+    padding: var(--spacing-lg) calc(var(--spacing-xl) * 1.5);
+    font-size: 1.125rem;
+}
+
+/* Small button */
+.btn-sm {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+}
+
+/* Button with icon */
+.btn i {
+    font-size: 1.1em;
+}
+
+/* =============================================
+   Cards
+   ============================================= */
+
+/* Base card styles */
+.card {
+    background: var(--light-bg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-normal);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Card hover effect - lift up */
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Card on dark background */
+.card-dark {
+    background: var(--darker-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card header with icon */
+.card-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.5rem;
+    color: var(--text-light);
+}
+
+/* Card with neon border on hover */
+.card-glow:hover {
+    border-color: var(--neon-green);
+    box-shadow: var(--shadow-neon);
+}
+
+/* Service card specific styling */
+.service-card {
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+/* Service card icon */
+.service-card .card-icon {
+    margin: 0 auto var(--spacing-lg);
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+}
+
+/* =============================================
+   Hero Section
+   ============================================= */
+
+/* Hero section container */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    /* Account for fixed navbar */
+    background: var(--gradient-dark);
+    color: var(--text-light);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hero background pattern */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(57, 255, 20, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Hero content wrapper */
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Hero title */
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-light);
+    background: none;
+    -webkit-text-fill-color: initial;
+}
+
+/* Hero title highlight span */
+.hero h1 span {
+    background: var(--gradient-neon);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Hero subtitle/tagline */
+.hero-tagline {
+    font-size: 1.5rem;
+    color: var(--text-purple-light);
+    margin-bottom: var(--spacing-xl);
+    max-width: 600px;
+}
+
+/* Hero buttons container */
+.hero-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+/* =============================================
+   Statistics Section
+   ============================================= */
+
+/* Stats container */
+.stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl) 0;
+}
+
+/* Individual stat item */
+.stat-item {
+    text-align: center;
+}
+
+/* Stat number - large */
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    text-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+    display: block;
+}
+
+/* Stat label */
+.stat-label {
+    font-size: 1rem;
+    color: var(--text-purple-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* =============================================
+   Features Section
+   ============================================= */
+
+/* Features grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+/* Feature card */
+.feature-card {
+    background: var(--darker-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-normal);
+}
+
+/* Feature card hover */
+.feature-card:hover {
+    border-color: var(--primary-purple);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-purple);
+}
+
+/* Feature icon */
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    font-size: 2rem;
+    color: var(--neon-green);
+}
+
+/* Feature title */
+.feature-card h3 {
+    color: var(--text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Feature description */
+.feature-card p {
+    color: var(--text-purple-light);
+    margin: 0;
+}
+
+/* =============================================
+   Forms
+   ============================================= */
+
+/* Form group wrapper */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Form label */
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+/* Form input and select */
+.form-control {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    background: var(--light-bg);
+    transition: all var(--transition-fast);
+}
+
+/* Form input focus state */
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+/* Form input on dark background */
+.form-control-dark {
+    background: var(--darker-bg);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+}
+
+.form-control-dark:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.2);
+}
+
+/* =============================================
+   Alerts and Notifications
+   ============================================= */
+
+/* Base alert styles */
+.alert {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Success alert */
+.alert-success {
+    background: rgba(57, 255, 20, 0.1);
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green-dark);
+}
+
+/* Error alert */
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    color: #dc2626;
+}
+
+/* Warning alert */
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid #f59e0b;
+    color: #d97706;
+}
+
+/* Info alert */
+.alert-info {
+    background: rgba(74, 144, 226, 0.1);
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+/* =============================================
+   Queue Display Components
+   ============================================= */
+
+/* Token display - large */
+.token-display {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    text-align: center;
+    padding: var(--spacing-xl);
+    text-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Token pulse animation */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 60px rgba(57, 255, 20, 0.8);
+    }
+}
+
+/* Queue position indicator */
+.queue-position {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--darker-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Position number */
+.position-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Queue item in list */
+.queue-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-sm);
+    transition: all var(--transition-fast);
+}
+
+/* Queue item hover */
+.queue-item:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+/* Queue item - currently serving */
+.queue-item.active {
+    background: rgba(57, 255, 20, 0.1);
+    border: 1px solid var(--neon-green);
+}
+
+/* =============================================
+   Dashboard Components
+   ============================================= */
+
+/* Dashboard header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard title */
+.dashboard-title {
+    font-size: 2rem;
+    color: var(--text-dark);
+}
+
+/* Stats cards row */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Stat card */
+.stat-card {
+    background: var(--light-bg);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+/* Stat card hover */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Stat card value */
+.stat-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    display: block;
+}
+
+/* Stat card label */
+.stat-card .label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* =============================================
+   Footer
+   ============================================= */
+
+/* Footer container */
+.footer {
+    background: var(--dark-bg);
+    color: var(--text-light);
+    padding: var(--spacing-xxl) 0 var(--spacing-lg);
+}
+
+/* Footer grid */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Footer brand section */
+.footer-brand {
+    max-width: 300px;
+}
+
+/* Footer brand logo */
+.footer-brand h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Footer brand icon */
+.footer-brand i {
+    color: var(--neon-green);
+}
+
+/* Footer description */
+.footer-brand p {
+    color: var(--text-purple-light);
+}
+
+/* Footer column title */
+.footer-column h4 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-light);
+}
+
+/* Footer links */
+.footer-links li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer-links a {
+    color: var(--text-purple-light);
+    transition: color var(--transition-fast);
+}
+
+.footer-links a:hover {
+    color: var(--neon-green);
+}
+
+/* Footer bottom bar */
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.875rem;
+    color: var(--text-purple-light);
+}
+
+/* =============================================
+   Responsive Design
+   ============================================= */
+
+/* Tablet and below */
+@media (max-width: 992px) {
+
+    /* Smaller headings */
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    /* Stack footer columns */
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Adjust stats */
+    .stat-number {
+        font-size: 2.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    /* Even smaller headings */
+    h1 {
+        font-size: 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    /* Stack hero buttons */
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    /* Full width buttons on mobile */
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Hide nav on mobile (for now) */
+    .navbar-nav {
+        display: none;
+    }
+
+    /* Single column footer */
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Stack footer bottom */
+    .footer-bottom {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+
+    /* Smaller section padding */
+    .section {
+        padding: var(--spacing-xl) 0;
+    }
+}
+
+/* =============================================
+   Utility Classes
+   ============================================= */
+
+/* Text alignment */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Display utilities */
+.d-flex {
+    display: flex;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-none {
+    display: none;
+}
+
+/* Flex utilities */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Margin utilities */
+.mt-1 {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-2 {
+    margin-top: var(--spacing-md);
+}
+
+.mt-3 {
+    margin-top: var(--spacing-lg);
+}
+
+.mt-4 {
+    margin-top: var(--spacing-xl);
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-lg);
+}
+
+.mb-4 {
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Padding utilities */
+.p-1 {
+    padding: var(--spacing-sm);
+}
+
+.p-2 {
+    padding: var(--spacing-md);
+}
+
+.p-3 {
+    padding: var(--spacing-lg);
+}
+
+.p-4 {
+    padding: var(--spacing-xl);
+}
+
+/* Width utilities */
+.w-100 {
+    width: 100%;
+}
+
+.w-50 {
+    width: 50%;
+}
+
+/* Visibility */
+.visible {
+    visibility: visible;
+}
+
+.hidden {
+    visibility: hidden;
+}

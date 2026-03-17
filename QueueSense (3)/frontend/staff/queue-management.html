@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Queue Management
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Management - QueueSense</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .sidebar-nav-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .queue-grid-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .queue-grid-header {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 1fr 1.5fr 100px 100px 100px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #312e81 100%) !important;
+            padding: 1.25rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .queue-grid-row {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 1fr 1.5fr 100px 100px 100px;
+            padding: 1.5rem;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .queue-grid-row:nth-child(3n+1) {
+            background: #fff0f3;
+            /* Light Pink */
+        }
+
+        .queue-grid-row:nth-child(3n+2) {
+            background: #ffffff;
+            /* White */
+        }
+
+        .queue-grid-row:nth-child(3n) {
+            background: #f0f7ff;
+            /* Light Blue */
+        }
+
+        .queue-grid-row:hover {
+            background: #ffffff !important;
+            transform: scale(1.005);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .queue-grid-row.emergency {
+            background: #fff1f0 !important;
+            border-left: 6px solid #ff4d4f !important;
+        }
+
+        .queue-grid-row.elder {
+            background: #f6ffed !important;
+            border-left: 6px solid #52c41a !important;
+        }
+
+        /* Custom Pink Badge for Info */
+        .bg-info {
+            background-color: #ffd6e7 !important;
+            color: #c41271 !important;
+        }
+
+        .queue-item {
+            transition: all 0.3s ease;
+        }
+
+        .queue-item:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .queue-item.emergency {
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .queue-item.elder {
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        .token-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #1a1a2e;
+            background: #f1f5f9;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.85rem;
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            text-transform: uppercase;
+        }
+
+        .status-waiting {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .status-serving {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-called {
+            background: #fef9c3;
+            color: #a16207;
+        }
+
+        .btn-action {
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .btn-call {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            border: none;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            background: none;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ff1744;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="queue-management.html" class="sidebar-nav-item active">
+                    <i class="fas fa-users-line"></i>
+                    <span>Queue Management</span>
+                </a>
+                <a href="elder-assist.html" class="sidebar-nav-item">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span>Elder Assistance</span>
+                </a>
+                <a href="appointments.html" class="sidebar-nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+                <a href="analytics.html" class="sidebar-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div>
+                    <h1>Queue Management</h1>
+                    <p class="text-muted">Live view of all waiting customers</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <select class="form-select" id="serviceFilter" onchange="loadQueue()" style="width: 250px;">
+                        <option value="0">All Services & Locations</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="callNext(0, 0, this)">
+                        <i class="fas fa-forward me-2"></i>Call Next
+                    </button>
+                </div>
+            </header>
+
+            <div class="queue-grid-container">
+                <div class="queue-grid-header">
+                    <div>Token</div>
+                    <div>Name</div>
+                    <div>Category</div>
+                    <div>Service</div>
+                    <div>Time</div>
+                    <div>Status</div>
+                    <div>Action</div>
+                </div>
+                <div id="queueEntries">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        let selectedServiceId = 1;
+        let selectedLocationId = 1;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isStaff()) { window.location.href = '../login.html'; return; }
+            await loadServices();
+            await loadQueue();
+            setInterval(loadQueue, 5000);
+
+            // Instant refresh when tab gains focus (e.g., switching from Dashboard)
+            window.addEventListener('focus', () => {
+                console.log('[Queue Management] Tab focused, refreshing...');
+                loadQueue();
+            });
+        });
+
+        async function loadServices() {
+            const resp = await API.Services.getAll();
+            if (resp.ok) {
+                const filter = document.getElementById('serviceFilter');
+                filter.innerHTML = '<option value="0">All Services & Locations</option>';
+                resp.data.services.forEach(s => {
+                    filter.innerHTML += `<option value="${s.service_id}">${s.service_name}</option>`;
+                });
+            }
+        }
+
+        async function loadQueue() {
+            const serviceId = parseInt(document.getElementById('serviceFilter').value) || 0;
+            const lid = 0; // Means all for the updated backend
+            console.log('[Queue Management] Loading queue for service:', serviceId);
+
+            try {
+                const resp = await API.Queue.getStatus(serviceId, lid);
+                if (resp.ok) {
+                    const container = document.getElementById('queueEntries');
+                    // Combine waiting and serving lists
+                    const serving = resp.data.currently_serving || [];
+                    const waiting = [...(resp.data.elder_queue || []), ...(resp.data.normal_queue || [])];
+                    const all = [...serving, ...waiting];
+
+                    console.log('[Queue Management] Currently Serving:', serving);
+                    console.log('[Queue Management] Waiting:', waiting.length, 'Serving:', serving.length);
+
+                    if (all.length === 0) {
+                        container.innerHTML = '<div class="p-5 text-center text-muted">No one in queue</div>';
+                        return;
+                    }
+
+                    container.innerHTML = '';
+
+                    // Sort: Serving first, then waiting by time
+                    all.sort((a, b) => {
+                        const scoreA = (a.status === 'called' || a.status === 'serving') ? 2 : 1;
+                        const scoreB = (b.status === 'called' || b.status === 'serving') ? 2 : 1;
+                        if (scoreA !== scoreB) return scoreB - scoreA;
+                        return new Date(a.check_in_time) - new Date(b.check_in_time);
+                    });
+
+                    all.forEach(item => {
+                        const isElder = item.queue_type === 'elder';
+                        const isServing = item.status === 'called' || item.status === 'serving';
+                        console.log('[Queue Management] Item:', item.token, 'Status:', item.status, 'isServing:', isServing);
+                        const time = new Date(item.check_in_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        let rowClass = '';
+                        if (isServing) rowClass = 'bg-success-subtle border-start border-success border-4';
+                        else if (item.is_emergency) rowClass = 'emergency';
+                        else if (isElder) rowClass = 'elder';
+
+                        let statusBadge = '<span class="status-badge status-waiting">Waiting</span>';
+                        if (isServing) statusBadge = '<span class="status-badge status-called">Active</span>';
+
+                        // No action button for waiting users
+                        let actionBtn = `<span class="text-muted">—</span>`;
+
+                        if (isServing) {
+                            actionBtn = `
+                                <button type="button" class="btn btn-sm btn-success w-100" onclick="serveToken('${item.queue_type}', ${item.queue_id}, this)">
+                                    <i class="fas fa-check me-1"></i> Mark Served
+                                </button>`;
+                        }
+
+                        container.innerHTML += `
+                            <div class="queue-grid-row ${rowClass}">
+                                <div class="token-badge">${item.token}</div>
+                                <div class="fw-bold text-truncate">${item.user_name || 'Walk-in'}</div>
+                                <div>
+                                    ${isElder ? '<span class="badge bg-info text-dark" style="font-size: 0.65rem;">ELDER</span>' : '<span class="text-muted small">Normal</span>'}
+                                    ${item.is_emergency ? ' <span class="badge bg-danger" style="font-size: 0.65rem;">URGENT</span>' : ''}
+                                </div>
+                                <div class="text-muted small text-truncate">${item.service_name || 'General'}</div>
+                                <div class="text-nowrap">${time}</div>
+                                <div>${statusBadge}</div>
+                                <div>${actionBtn}</div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.error('[Queue Management] Load error:', err);
+            }
+        }
+
+
+        async function callNext(serviceId = 0, locationId = 0, btnElement = null) {
+            // If called from row, use provided IDs. If from header button, use filter.
+            const sid = serviceId || parseInt(document.getElementById('serviceFilter').value) || 0;
+            const lid = locationId || 0; // Default or mapped if needed
+
+            // Handle button state
+            const btn = btnElement || (event && event.target ? event.target.closest('button') : null);
+            let originalText = '';
+            if (btn) {
+                originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+
+            if (sid === 0) {
+                Toast.info('Please select a specific service to Call Next');
+                if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+                return;
+            }
+            const c = 1;
+            console.log('[Queue Management] Calling next for service:', sid);
+
+            try {
+                const r = await API.Queue.callNext(sid, lid, c);
+                console.log('[Queue Management] API response:', r);
+                if (r.ok) {
+                    if (window.Voice && typeof Voice.announceToken === 'function') {
+                        Voice.announceToken(r.data.token, c);
+                    }
+                    Toast.success(`Called token ${r.data.token}`);
+                    await loadQueue();
+                } else {
+                    console.log('[Queue Management] Queue empty:', r.data);
+                    Toast.warning(r.data.error || 'No one in queue for this service');
+                }
+            } catch (err) {
+                console.error('[Queue Management] Error:', err);
+                Toast.error('Server connection failed');
+            } finally {
+                // Re-enable button
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            }
+        }
+
+        async function serveSpecificToken(queueType, queueId, btnElement) {
+            console.log('[Queue Management] serveSpecificToken called:', queueType, queueId);
+            const btn = btnElement || (event && event.target ? event.target.closest('button') : null);
+            let originalText = '';
+            if (btn) {
+                originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+
+            const c = 1; // Default counter
+
+            try {
+                const r = await API.Queue.callSpecific(queueType, queueId, c);
+                if (r.ok) {
+                    if (window.Voice && typeof Voice.announceToken === 'function') {
+                        Voice.announceToken(r.data.token, c);
+                    }
+                    Toast.success(`Called token ${r.data.token}`);
+                    await loadQueue();
+                } else {
+                    Toast.warning(r.data.error || 'Failed to call token');
+                }
+            } catch (err) {
+                console.error('[Queue Management] Error:', err);
+                Toast.error('Server connection failed');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            }
+        }
+
+
+        async function serveToken(queueType, queueId, btnElement) {
+            // Use passed element or fallback to event target
+            const btn = btnElement || event.target.closest('button');
+            if (!btn) return;
+
+            const originalText = btn.innerHTML;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                const response = await API.Queue.markServed(queueType, queueId);
+                if (response.ok) {
+                    if (typeof Toast !== 'undefined') Toast.success('Token marked as served');
+                    await loadQueue();
+                } else {
+                    if (typeof Toast !== 'undefined') Toast.error(response.data.error || 'Failed to serve token');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error serving token:', error);
+                if (typeof Toast !== 'undefined') Toast.error('An unexpected error occurred');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+
+        function logout() { Modal.confirm('Are you sure you want to log out?', () => Auth.logout()); }
+    </script>
+</body>
+
+</html>

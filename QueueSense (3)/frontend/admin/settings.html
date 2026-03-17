@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Admin Settings
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Admin Panel</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        /* Admin Dashboard Styles */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .sidebar-nav-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        .settings-tabs {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            padding: 0 1.5rem;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary-purple);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-purple);
+            border-bottom-color: var(--primary-purple);
+            background: none;
+        }
+
+        .tab-content {
+            padding: 2rem;
+        }
+
+        .settings-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .settings-section h3 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-section h3 i {
+            color: var(--primary-purple);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--light-gray);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+        }
+
+        .setting-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .setting-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .form-switch {
+            padding-left: 2.5em;
+        }
+
+        .form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            cursor: pointer;
+        }
+
+        .form-switch .form-check-input:checked {
+            background-color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .alert {
+            border-radius: var(--radius-sm);
+            border: none;
+        }
+
+        .alert-info {
+            background: rgba(74, 144, 226, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .danger-zone {
+            background: rgba(239, 68, 68, 0.05);
+            border: 2px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .danger-zone h3 {
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services.html" class="sidebar-nav-item">
+                    <i class="fas fa-cogs"></i>
+                    <span>Manage Services</span>
+                </a>
+                <a href="staff.html" class="sidebar-nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Staff</span>
+                </a>
+                <a href="users.html" class="sidebar-nav-item">
+                    <i class="fas fa-user-group"></i>
+                    <span>Users</span>
+                </a>
+                <a href="analytics.html" class="sidebar-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="settings.html" class="sidebar-nav-item active">
+                    <i class="fas fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Settings</h1>
+                    <p class="text-muted">System configuration and preferences</p>
+                </div>
+            </header>
+
+            <!-- Settings Tabs -->
+            <div class="settings-tabs">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general">
+                            <i class="fas fa-sliders"></i> General
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notifications">
+                            <i class="fas fa-bell"></i> Notifications
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#security">
+                            <i class="fas fa-shield-halved"></i> Security
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#system">
+                            <i class="fas fa-server"></i> System
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- General Settings -->
+                    <div class="tab-pane fade show active" id="general">
+                        <div class="settings-section">
+                            <h3><i class="fas fa-building"></i> Organization Details</h3>
+                            <form id="orgForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Organization Name</label>
+                                        <input type="text" id="org_name" class="form-control"
+                                            placeholder="QueueSense Inc." required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Contact Email</label>
+                                        <input type="email" id="org_email" class="form-control"
+                                            placeholder="admin@queuesense.com" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" id="org_phone" class="form-control"
+                                            placeholder="+1 234 567 8900" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Time Zone</label>
+                                        <select id="org_timezone" class="form-select">
+                                            <option value="UTC-5">UTC-5 (EST)</option>
+                                            <option value="UTC-8">UTC-8 (PST)</option>
+                                            <option value="UTC+0">UTC+0 (GMT)</option>
+                                            <option value="UTC+5:30" selected>UTC+5:30 (IST)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3><i class="fas fa-clock"></i> Queue Settings</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Enable Elder Priority</h4>
+                                    <p>Automatically prioritize elderly users (60+ years) in queues</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox" id="elder_priority">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Auto-Assign Tokens</h4>
+                                    <p>Automatically generate and assign tokens to users upon registration</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="auto_assign_tokens">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Allow Appointment Booking</h4>
+                                    <p>Enable users to book appointments for specific time slots</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="allow_appointments">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="tab-pane fade" id="notifications">
+                        <div class="settings-section">
+                            <h3><i class="fas fa-envelope"></i> Email Notifications</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Token Ready Notifications</h4>
+                                    <p>Send email when user's token is about to be called</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="notify_token_ready">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Daily Reports</h4>
+                                    <p>Receive daily summary reports via email</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="notify_daily_reports">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>System Alerts</h4>
+                                    <p>Get notified about system issues and updates</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="notify_system_alerts">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3><i class="fas fa-mobile-screen"></i> SMS Notifications</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Token Status Updates</h4>
+                                    <p>Send SMS updates about queue position and status</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="notify_sms_status">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Appointment Reminders</h4>
+                                    <p>Send SMS reminders for upcoming appointments</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="notify_sms_reminders">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="tab-pane fade" id="security">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Keep your account secure by using strong passwords and
+                            enabling two-factor authentication.
+                        </div>
+
+                        <div class="settings-section">
+                            <h3><i class="fas fa-key"></i> Password & Authentication</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Two-Factor Authentication</h4>
+                                    <p>Add an extra layer of security to your account</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox" id="sec_2fa">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Session Timeout</h4>
+                                    <p>Automatically logout after 30 minutes of inactivity</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="sec_session_timeout">
+                                </div>
+                            </div>
+                            <button id="changePasswordBtn" class="btn btn-primary mt-3">
+                                <i class="fas fa-lock"></i> Change Password
+                            </button>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3><i class="fas fa-users-gear"></i> Access Control</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>IP Whitelist</h4>
+                                    <p>Restrict admin access to specific IP addresses</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="sec_ip_whitelist">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Login Attempt Limit</h4>
+                                    <p>Lock accounts after 5 failed login attempts</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox" id="sec_login_limit">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Settings -->
+                    <div class="tab-pane fade" id="system">
+                        <div class="settings-section">
+                            <h3><i class="fas fa-database"></i> Data Management</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Automatic Backups</h4>
+                                    <p>Create daily backups of all system data</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="sys_auto_backups">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Data Retention Period</label>
+                                    <select id="sys_retention_period" class="form-select">
+                                        <option value="30">30 Days</option>
+                                        <option value="90">90 Days</option>
+                                        <option value="180" selected>180 Days</option>
+                                        <option value="365">1 Year</option>
+                                        <option value="0">Forever</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Download Backup
+                            </button>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3><i class="fas fa-chart-bar"></i> Performance</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Enable Caching</h4>
+                                    <p>Improve system performance with intelligent caching</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox"
+                                        id="sys_enable_caching">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Optimize Database</h4>
+                                    <p>Automatically optimize database performance weekly</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input setting-toggle" type="checkbox" id="sys_optimize_db">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danger Zone -->
+                        <div class="danger-zone">
+                            <h3><i class="fas fa-triangle-exclamation"></i> Danger Zone</h3>
+                            <p class="text-muted mb-3">These actions are irreversible. Please be careful.</p>
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-outline-danger" id="clearDataBtn">
+                                    <i class="fas fa-trash"></i> Clear All Data
+                                </button>
+                                <button class="btn btn-danger" id="resetSystemBtn">
+                                    <i class="fas fa-power-off"></i> Reset System
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal fade" id="passwordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="passwordForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" id="current_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" id="new_password" class="form-control" required>
+                            <small class="text-muted">Min 8 chars, 1 special char</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" id="confirm_password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check auth
+            if (!Auth.isAdmin()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Load settings
+            await loadSettings();
+
+            // Set up auto-save for toggles
+            document.querySelectorAll('.setting-toggle').forEach(toggle => {
+                toggle.addEventListener('change', async (e) => {
+                    const key = e.target.id;
+                    const value = e.target.checked;
+                    await saveSingleSetting(key, value);
+                });
+            });
+
+            // Set up form submission for org details
+            document.getElementById('orgForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const settings = {
+                    org_name: document.getElementById('org_name').value,
+                    org_email: document.getElementById('org_email').value,
+                    org_phone: document.getElementById('org_phone').value,
+                    org_timezone: document.getElementById('org_timezone').value
+                };
+                await saveBulkSettings(settings);
+            });
+
+            // Set up change listener for retention period
+            const retentionPeriod = document.getElementById('sys_retention_period');
+            if (retentionPeriod) {
+                retentionPeriod.addEventListener('change', async (e) => {
+                    await saveSingleSetting('sys_retention_period', e.target.value);
+                });
+            }
+
+            // Change Password Modal
+            const pModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+            document.getElementById('changePasswordBtn').onclick = () => pModal.show();
+
+            document.getElementById('passwordForm').onsubmit = async (e) => {
+                e.preventDefault();
+                const current_password = document.getElementById('current_password').value;
+                const new_password = document.getElementById('new_password').value;
+                const confirm_password = document.getElementById('confirm_password').value;
+
+                if (new_password !== confirm_password) {
+                    showToast('Passwords do not match', 'error');
+                    return;
+                }
+
+                const response = await API.Auth.changePassword({ current_password, new_password });
+                if (response?.ok) {
+                    showToast('Password changed successfully', 'success');
+                    pModal.hide();
+                    e.target.reset();
+                } else {
+                    showToast(response?.data?.error || 'Password change failed', 'error');
+                }
+            };
+
+            // System Actions
+            document.getElementById('resetSystemBtn').onclick = () => {
+                Modal.confirm('Are you sure? This will clear all tokens and appointments.', async () => {
+                    const res = await apiRequest('/settings/reset', { method: 'POST' });
+                    if (res?.ok) showToast('System reset successful', 'success');
+                    else showToast('Reset failed', 'error');
+                });
+            };
+
+            document.getElementById('clearDataBtn').onclick = () => {
+                Modal.confirm('Clear all historical data?', async () => {
+                    showToast('Data cleared (simulated)', 'success');
+                });
+            };
+        });
+
+        // Helper for Toasts
+        function showToast(msg, type) {
+            if (window.Toast) {
+                window.Toast.show(msg, type);
+            } else {
+                console.log(`[Toast] ${type}: ${msg}`);
+            }
+        }
+
+        // Load settings
+        async function loadSettings() {
+            try {
+                const response = await API.Settings.get();
+                if (response && response.ok) {
+                    const settings = response.data.settings;
+                    console.log('[DEBUG] Settings loaded:', settings);
+
+                    // Map settings to UI elements
+                    for (const [key, value] of Object.entries(settings)) {
+                        const el = document.getElementById(key);
+                        if (!el) continue;
+
+                        if (el.type === 'checkbox') {
+                            el.checked = value === 'true' || value === true;
+                        } else {
+                            el.value = value;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('[DEBUG] Error loading settings:', error);
+                showToast('Failed to load settings', 'error');
+            }
+        }
+
+        // Save single setting
+        async function saveSingleSetting(key, value) {
+            try {
+                const response = await API.Settings.updateSingle(key, value);
+                if (response && response.ok) {
+                    showToast(`${key.replace(/_/g, ' ').replace(/notify |sec |sys /g, '')} updated`, 'success');
+                } else {
+                    showToast('Failed to update setting', 'error');
+                }
+            } catch (error) {
+                console.error('[DEBUG] Error saving setting:', error);
+                showToast('Network error while saving', 'error');
+            }
+        }
+
+        // Save bulk settings
+        async function saveBulkSettings(settings) {
+            try {
+                const response = await API.Settings.update(settings);
+                if (response && response.ok) {
+                    showToast('General settings saved', 'success');
+                } else {
+                    showToast('Failed to save settings', 'error');
+                }
+            } catch (error) {
+                console.error('[DEBUG] Error saving settings:', error);
+                showToast('Network error while saving', 'error');
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                Auth.logout();
+            }
+        }
+    </script>
+</body>
+
+</html>

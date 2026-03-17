@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Staff Dashboard
+     Enterprise Edition - Optimized Layout V3
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - QueueSense</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        /* Sidebar Layout */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
+
+        /* Carousel Section */
+        .dashboard-carousel {
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            background: #000;
+        }
+
+        .dashboard-carousel .carousel-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: brightness(1.0);
+            transition: opacity 0.5s ease;
+        }
+
+        .dashboard-carousel .carousel-item.active img {
+            transform: none;
+        }
+
+        .dashboard-carousel .carousel-caption {
+            bottom: 15%;
+            text-align: left;
+            left: 5%;
+            right: 5%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 6px solid var(--primary-blue);
+            max-width: 60%;
+        }
+
+        .dashboard-carousel .carousel-caption h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .dashboard-carousel .carousel-caption p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+            color: #fff;
+        }
+
+
+        /* Stats Grid */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card .value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Panel Stacking */
+        .panel-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .queue-panel {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+        }
+
+        .registry-panel {
+            background: #e1f5fe !important;
+            /* Vivid Light blue */
+            border: 2px solid #b3e5fc !important;
+            box-shadow: 0 10px 40px rgba(3, 169, 244, 0.1) !important;
+        }
+
+        .registry-panel .panel-header h2 {
+            color: #0277bd;
+        }
+
+        .enterprise-panel {
+            background: linear-gradient(145deg, #ffffff, #f8f9ff);
+            border: 1px solid rgba(74, 144, 226, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enterprise-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--gradient-primary);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .panel-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--dark-bg);
+        }
+
+        /* Operational Status */
+        .current-token-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--dark-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2.5rem;
+            color: white;
+            width: 100%;
+            gap: 3rem;
+        }
+
+        .token-info .token {
+            font-size: 4.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-green);
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+        }
+
+        .action-btns-horizontal {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .btn-action {
+            width: 110px;
+            height: 110px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            font-size: 0.85rem;
+            gap: 0.6rem;
+        }
+
+        .btn-call-next {
+            background: var(--gradient-neon);
+            color: var(--dark-bg);
+        }
+
+        .btn-mark-served {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-no-show {
+            background: #ff5252;
+            color: white;
+        }
+
+        /* Form Styling */
+        .elder-form-vertical {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .form-group-custom {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .form-input-custom {
+            width: 100%;
+            height: 48px;
+            padding: 0 1rem;
+            border: 2px solid #eef0f5;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+        }
+
+        .form-actions-row {
+            grid-column: span 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-add-queue {
+            background: var(--gradient-primary);
+            color: white;
+            height: 52px;
+            padding: 0 3rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 700;
+        }
+
+        /* Sidebar Styling */
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            color: #ef4444;
+            background: none;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ff1744;
+        }
+
+        /* Live Monitor Styles */
+        .sessions-monitor {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(13, 110, 253, 0.05);
+        }
+
+        .sessions-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0 1rem;
+            scrollbar-width: thin;
+        }
+
+        .session-card {
+            flex: 0 0 220px;
+            background: #f8faff;
+            border: 1px solid #e1e8f5;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .session-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .session-card .token-label {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .session-card .counter-info {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .session-card .service-tag {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .session-card .status-dot {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+
+        .sessions-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+            padding: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Hourly Load Chart Styles */
+        .chart-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+
+        /* Sharp "Enterprise" Disabled State - Distinct Inactivity */
+        .btn:disabled {
+            opacity: 0.6 !important;
+            background-color: #d1d5db !important;
+            border-color: #9ca3af !important;
+            color: #4b5563 !important;
+            cursor: not-allowed !important;
+            filter: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        /* Operational Button Colors - Solid Enterprise */
+        .btn-call-solid {
+            background-color: #0d6efd !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-call-solid:hover {
+            background-color: #0b5ed7 !important;
+        }
+
+        .btn-served-solid {
+            background-color: #198754 !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-served-solid:hover {
+            background-color: #157347 !important;
+        }
+
+        .btn-noshow-solid {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-noshow-solid:hover {
+            background-color: #bb2d3b !important;
+        }
+
+        /* Make status text sharper */
+        .op-label {
+            color: #6c757d;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Sector indicator banner */
+        .sector-banner {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.25rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-left: 5px solid;
+        }
+
+        .sector-banner.hospital {
+            background: #e8f5e9;
+            border-color: #43a047;
+            color: #2e7d32;
+        }
+
+        .sector-banner.bank {
+            background: #e3f2fd;
+            border-color: #1e88e5;
+            color: #1565c0;
+        }
+
+        .sector-banner.government {
+            background: #fff3e0;
+            border-color: #fb8c00;
+            color: #e65100;
+        }
+
+        .sector-banner.restaurant {
+            background: #fce4ec;
+            border-color: #e91e63;
+            color: #880e4f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+            <nav class="sidebar-nav mt-4">
+                <a href="dashboard.html" class="sidebar-nav-item active"><i
+                        class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="queue-management.html" class="sidebar-nav-item"><i class="fas fa-users-line"></i><span>Queue
+                        Management</span></a>
+                <a href="elder-assist.html" class="sidebar-nav-item"><i
+                        class="fas fa-hand-holding-heart"></i><span>Elder Assisted</span></a>
+                <a href="appointments.html" class="sidebar-nav-item"><i
+                        class="fas fa-calendar-check"></i><span>Appointments</span></a>
+                <a href="analytics.html" class="sidebar-nav-item"><i
+                        class="fas fa-chart-line"></i><span>Analytics</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()"><i
+                        class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header mb-4">
+                <div class="header-info">
+                    <h1 id="dashboardTitle">Staff Dashboard</h1>
+                    <p class="text-muted mb-0" id="dashboardSubtitle">Select a Sector to Manage Queue</p>
+                </div>
+                <div class="header-actions d-flex align-items-center gap-3 flex-wrap">
+                    <select class="form-select form-select-sm fw-bold border-primary" id="dashboardServiceFilter"
+                        style="width: 230px; display:none;"
+                        onchange="updateContext(this.value); state.selectedServiceId=parseInt(this.value); refreshDashboard();">
+                        <option value="0">🔷 All Services</option>
+                    </select>
+                    <button class="voice-toggle active" id="voiceToggle" onclick="toggleVoice()">
+                        <i class="fas fa-volume-high"></i><span id="voiceStatus">Voice ON</span>
+                    </button>
+                    <div class="d-flex align-items-center gap-1 p-1 rounded"
+                        style="background-color: #0d6efd; color: white;">
+                        <small class="ms-1 fw-bold">Counter</small>
+                        <select class="form-select form-select-sm border-0 bg-transparent text-white fw-bold"
+                            id="counterSelect" style="width: 60px; cursor: pointer;">
+                            <option value="1" style="color: #000;">01</option>
+                            <option value="2" style="color: #000;">02</option>
+                            <option value="3" style="color: #000;">03</option>
+                            <option value="4" style="color: #000;">04</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+
+            <!-- Hero Carousel -->
+            <div id="staffCarousel" class="carousel slide dashboard-carousel" data-bs-ride="carousel"
+                data-bs-interval="5000">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&q=80&w=1400"
+                            alt="QueueSense Headquarters" style="object-fit:cover; height:350px;">
+                        <div class="carousel-caption">
+                            <h3>QueueSense Headquarters</h3>
+                            <p>Optimizing operational efficiency with enterprise-grade technology.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1400"
+                            alt="Collaborative Workspace" style="object-fit:cover; height:350px;">
+                        <div class="carousel-caption">
+                            <h3>Collaborative Workspace</h3>
+                            <p>Empowering staff with intelligent tools for better service delivery.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=1400"
+                            alt="Data-Driven Insights" style="object-fit:cover; height:350px;">
+                        <div class="carousel-caption">
+                            <h3>Data-Driven Insights</h3>
+                            <p>Monitoring branch performance in real-time across all sectors.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sector Selection Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <a href="hospital-dashboard.html" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #15803d, #22c55e); border-radius: 16px; padding: 2rem 1.5rem; color: white; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 4px 15px rgba(22,163,74,0.3); min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;"
+                            onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 8px 25px rgba(22,163,74,0.5)'"
+                            onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(22,163,74,0.3)'">
+                            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🏥</div>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.3rem;">Hospital</h3>
+                            <p class="mb-0 opacity-75" style="font-size: 0.85rem;">OPD, Lab, Pharmacy, Emergency</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="bank-dashboard.html" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #1565c0, #42a5f5); border-radius: 16px; padding: 2rem 1.5rem; color: white; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 4px 15px rgba(30,136,229,0.3); min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;"
+                            onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 8px 25px rgba(30,136,229,0.5)'"
+                            onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(30,136,229,0.3)'">
+                            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🏦</div>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.3rem;">Bank</h3>
+                            <p class="mb-0 opacity-75" style="font-size: 0.85rem;">Accounts, Loans, Deposits, Teller</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="government-dashboard.html" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #bf360c, #ff7043); border-radius: 16px; padding: 2rem 1.5rem; color: white; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 4px 15px rgba(230,81,0,0.3); min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;"
+                            onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 8px 25px rgba(230,81,0,0.5)'"
+                            onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(230,81,0,0.3)'">
+                            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🏛️</div>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.3rem;">Government</h3>
+                            <p class="mb-0 opacity-75" style="font-size: 0.85rem;">Pension, Certificates, Ration, Tax
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="restaurant-dashboard.html" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #880e4f, #ec407a); border-radius: 16px; padding: 2rem 1.5rem; color: white; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 4px 15px rgba(194,24,91,0.3); min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;"
+                            onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 8px 25px rgba(194,24,91,0.5)'"
+                            onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(194,24,91,0.3)'">
+                            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🍽️</div>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.3rem;">Restaurant</h3>
+                            <p class="mb-0 opacity-75" style="font-size: 0.85rem;">Dine-In, Takeaway, Billing</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+    </div>
+    </div>
+    </main>
+
+    </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        // Sector -> keyword mapping for filtering
+        const SECTOR_CONFIG = {
+            all: { label: 'All Sectors', subtitle: 'Live Status & Management', icon: '🌐', keywords: [] },
+            hospital: { label: 'Hospital', subtitle: 'Hospital Queue Management', icon: '🏥', keywords: ['hospital', 'opd', 'lab', 'pharmacy', 'emergency', 'health', 'clinic', 'doctor'] },
+            bank: { label: 'Bank', subtitle: 'Banking Services Dashboard', icon: '🏦', keywords: ['bank', 'account', 'cash', 'loan', 'deposit', 'savings', 'fd', 'investment', 'teller'] },
+            government: { label: 'Government', subtitle: 'Government Office Dashboard', icon: '🏛️', keywords: ['govt', 'gov', 'government', 'pension', 'certificate', 'ration', 'tax', 'legal', 'scheme', 'retirement', 'digital life', 'senior citizen', 'asset'] },
+            restaurant: { label: 'Restaurant', subtitle: 'Restaurant Queue Dashboard', icon: '🍽️', keywords: ['restaurant', 'dine', 'takeaway', 'billing', 'food', 'table', 'pickup'] }
+        };
+
+        let allServices = [];  // All services from API
+        let state = {
+            voiceEnabled: true,
+            currentQueueEntry: null,
+            selectedServiceId: 0,
+            selectedLocationId: 0,
+            selectedSector: 'all',
+            poller: null,
+            charts: { dist: null, hourly: null }
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isStaff()) return window.location.href = '../login.html';
+            await loadAllServices();
+            setupDatePicker();
+            initVisuals();
+            const poller = new Poller(refreshDashboard, 5000);
+            poller.start();
+            window.addEventListener('focus', () => refreshDashboard());
+        });
+
+        async function loadAllServices() {
+            try {
+                const resp = await API.Services.getAll();
+                if (resp && resp.ok && resp.data.services) {
+                    allServices = resp.data.services;
+                }
+            } catch (e) {
+                console.warn('[Dashboard] Could not load services from API, using fallback');
+                allServices = [];
+            }
+            renderServiceDropdowns('all');
+        }
+
+        function getServicesForSector(sector) {
+            if (sector === 'all' || !SECTOR_CONFIG[sector]) return allServices;
+            const kws = SECTOR_CONFIG[sector].keywords;
+            return allServices.filter(s => {
+                const name = s.service_name.toLowerCase();
+                const code = (s.service_code || '').toLowerCase();
+                return kws.some(k => name.includes(k) || code.startsWith(k));
+            });
+        }
+
+        function renderServiceDropdowns(sector) {
+            const filtered = getServicesForSector(sector);
+            const cfg = SECTOR_CONFIG[sector] || SECTOR_CONFIG.all;
+
+            // Update header title & subtitle
+            const titleEl = document.getElementById('dashboardTitle');
+            const subtitleEl = document.getElementById('dashboardSubtitle');
+            titleEl.textContent = sector === 'all' ? 'Staff Dashboard' : `${cfg.icon} ${cfg.label} Dashboard`;
+            subtitleEl.textContent = cfg.subtitle;
+
+            // Update sector banner
+            const banner = document.getElementById('sectorBanner');
+            const bannerText = document.getElementById('sectorBannerText');
+            const bannerIcon = document.getElementById('sectorBannerIcon');
+            const SECTOR_ICONS = { hospital: 'fa-hospital', bank: 'fa-university', government: 'fa-landmark', restaurant: 'fa-utensils' };
+            if (sector === 'all') {
+                banner.style.display = 'none';
+                banner.className = 'sector-banner';
+            } else {
+                banner.style.display = 'flex';
+                banner.className = `sector-banner ${sector}`;
+                bannerIcon.className = `fas ${SECTOR_ICONS[sector] || 'fa-circle-dot'}`;
+                bannerText.textContent = `${cfg.icon} ${cfg.label} Dashboard — ${filtered.length} service${filtered.length !== 1 ? 's' : ''} available`;
+            }
+
+            // Update service filter dropdown
+            const svcFilter = document.getElementById('dashboardServiceFilter');
+            svcFilter.innerHTML = '<option value="0">🔷 All Services</option>';
+            filtered.forEach(s => {
+                svcFilter.innerHTML += `<option value="${s.service_id}">${s.service_name}</option>`;
+            });
+            svcFilter.value = '0';
+            state.selectedServiceId = 0;
+
+            // Update registry service dropdown
+            const regSelect = document.getElementById('elderService');
+            regSelect.innerHTML = '<option value="">Select Service</option>';
+            filtered.forEach(s => {
+                regSelect.innerHTML += `<option value="${s.service_id}">${s.service_name}</option>`;
+            });
+            regSelect.value = '';
+            regSelect.style.borderColor = '';
+
+            refreshDashboard();
+        }
+
+        function onSectorChange(sector) {
+            state.selectedSector = sector;
+            state.selectedServiceId = 0;
+            renderServiceDropdowns(sector);
+        }
+
+        function updateContext(val) {
+            const serviceId = parseInt(val);
+            const registrySelect = document.getElementById('elderService');
+            if (serviceId === 0) {
+                registrySelect.value = '';
+                registrySelect.style.borderColor = '';
+            } else {
+                registrySelect.value = serviceId;
+                registrySelect.style.borderColor = 'var(--neon-green)';
+                loadSlots();
+            }
+        }
+
+        function setupDatePicker() {
+            const el = document.getElementById('appointmentDate');
+            const now = new Date().toISOString().split('T')[0];
+            el.min = now; el.value = now;
+            loadSlots();
+        }
+
+        async function loadSlots() {
+            const sid = document.getElementById('elderService').value;
+            const dt = document.getElementById('appointmentDate').value;
+            const sel = document.getElementById('timeSlot');
+
+            if (!sid || !dt) {
+                sel.innerHTML = '<option value="">Select Service & Date</option>';
+                return;
+            }
+
+            sel.innerHTML = '<option value="">Syncing...</option>';
+            try {
+                // In our current DB setup, each service 1-8 has a corresponding location with ID 1-8
+                const res = await API.Appointments.getSlots(sid, sid, dt);
+                if (res.ok && res.data.slots) {
+                    sel.innerHTML = '<option value="">Select Slot</option>';
+                    res.data.slots.forEach(s => {
+                        if (s.available) {
+                            const start = s.window_start.substring(0, 5);
+                            const end = s.window_end.substring(0, 5);
+                            sel.innerHTML += `<option value="${start}">${start} - ${end}</option>`;
+                        }
+                    });
+                } else if (!res || res.status === 0) {
+                    throw new Error('INACTIVE');
+                } else {
+                    Toast.error(res.data.error || 'Slot sync failed');
+                }
+            } catch (e) {
+                console.warn('[Slot Sync] Using offline fallback');
+                sel.innerHTML = '<option value="09:00">09:00 - 10:00</option><option value="10:00">10:00 - 11:00</option><option value="11:00">11:00 - 12:00</option>';
+            }
+        }
+
+        async function refreshDashboard() {
+            // Ensure service ID is always an integer
+            const sid = parseInt(state.selectedServiceId) || 0;
+            const lid = sid; // 1-to-1 mapping in our simplified enterprise config
+
+            console.log('[Dashboard] Refreshing for service:', sid, 'type:', typeof sid);
+
+
+            // 1. Fetch Analytics Stats
+            try {
+                const res = await API.Analytics.getDashboard({ service_id: sid, location_id: lid, sector: state.selectedSector !== 'all' ? state.selectedSector : null });
+                if (res.ok) {
+                    document.getElementById('waitingCount').textContent = res.data.total_waiting || 0;
+                    document.getElementById('servingCount').textContent = res.data.currently_serving || 0;
+                    document.getElementById('servedCount').textContent = res.data.served_today || 0;
+                    document.getElementById('elderCount').textContent = res.data.elder_waiting || 0;
+
+                    const avg = res.data.avg_wait_time_minutes;
+                    document.getElementById('avgWait').textContent = (avg > 0) ? avg + 'm' : 'New';
+
+                    // Prepare charts data
+                    const distData = [
+                        res.data.elder_waiting || 0,
+                        res.data.normal_waiting || 0,
+                        res.data.elder_served || 0,
+                        res.data.normal_served || 0
+                    ];
+                    updateCharts(distData, res.data.hourly_distribution || []);
+                }
+            } catch (e) {
+                console.error('[Dashboard] Analytics Sync Failed:', e);
+            }
+
+            // 2. Fetch Live Queue Status & Active Sessions
+            try {
+                const q = await API.Queue.getStatus(sid, lid, state.selectedSector !== 'all' ? state.selectedSector : null);
+                if (q.ok) {
+                    renderQueue(q.data);
+
+                    const totalWaiting = q.data.total_waiting_count || 0;
+                    const currentlyServingList = q.data.currently_serving || [];
+                    const activeCounter = parseInt(document.getElementById('counterSelect').value) || 1;
+
+                    // Sync "Currently Serving" state from backend
+                    let myEntry = currentlyServingList.find(x => x.counter_number === activeCounter);
+
+                    // Logic to sync active session
+                    if (myEntry) {
+                        if (!state.currentQueueEntry || state.currentQueueEntry.token !== myEntry.token) {
+                            console.log('[Dashboard] Syncing active session:', myEntry);
+                            state.currentQueueEntry = myEntry;
+                            document.getElementById('currentToken').textContent = myEntry.token;
+                            document.getElementById('currentName').textContent = myEntry.user_name || 'Customer';
+                            document.getElementById('currentCounter').textContent = activeCounter;
+                        }
+                    } else {
+                        if (state.currentQueueEntry) {
+                            console.log('[Dashboard] Clearing stale session');
+                            state.currentQueueEntry = null;
+                            document.getElementById('currentToken').textContent = '---';
+                            document.getElementById('currentName').textContent = '---';
+                        }
+                    }
+
+                    // Dynamic Button States (Universal Support)
+                    // We now allow calling next even from All Services view (Universal Call)
+                    const btnCallNext = document.getElementById('btnCallNext');
+                    const btnServed = document.getElementById('btnServed');
+                    const btnNoShow = document.getElementById('btnNoShow');
+                    const isServing = !!state.currentQueueEntry;
+
+                    if (btnCallNext) {
+                        // Disable Call Next if queue is empty (0 waiting)
+                        // Works for both Specific Service (wait for that service) AND All Services (wait total)
+                        btnCallNext.disabled = (totalWaiting === 0);
+                        btnCallNext.title = (totalWaiting === 0) ? "Queue is empty" : "Call Next Customer";
+
+                        // Clean "Enterprise" look: remove manual style overrides, rely on bootstrap disabled state
+                        btnCallNext.style.removeProperty('opacity');
+                        btnCallNext.style.removeProperty('cursor');
+                    }
+
+                    // Served, No Show, and Clear only enabled if isServing
+                    if (btnServed) {
+                        btnServed.disabled = !isServing;
+                        btnServed.style.removeProperty('opacity');
+                        btnServed.style.removeProperty('cursor');
+                    }
+
+                    if (btnNoShow) {
+                        btnNoShow.disabled = !isServing;
+                        btnNoShow.style.removeProperty('opacity');
+                        btnNoShow.style.removeProperty('cursor');
+                    }
+
+                    const btnCancelCall = document.getElementById('btnCancelCall');
+                    if (btnCancelCall) {
+                        btnCancelCall.style.display = isServing ? 'block' : 'none';
+                    }
+                }
+            } catch (e) {
+                console.error('[Dashboard] Queue Sync Failed:', e);
+            }
+        }
+
+
+        function renderQueue(data) {
+            const el = document.getElementById('queueList');
+            const m = [...(data.elder_queue || []), ...(data.normal_queue || [])];
+
+            // Update remaining count in header
+            const remainingEl = document.getElementById('remainingCount');
+            if (remainingEl) remainingEl.textContent = `(${m.length} Remaining)`;
+
+            if (m.length === 0) {
+                el.innerHTML = '<div class="p-5 text-center text-muted">No pending tokens.</div>';
+            } else {
+                el.innerHTML = m.map(i => `
+                    <div class="p-3 border-bottom d-flex align-items-center">
+                        <div class="h4 mb-0 me-3 fw-bold" style="font-family:JetBrains Mono">${i.token}</div>
+                        <div class="flex-grow-1"><strong>${i.user_name || 'Walk-in'}</strong></div>
+                        <span class="badge ${i.queue_type === 'elder' ? 'bg-success' : 'bg-primary'}">${i.queue_type.toUpperCase()}</span>
+                    </div>
+                `).join('');
+            }
+
+            // New: Live Serving Sessions Monitor
+            const sessionEl = document.getElementById('liveSessions');
+            const serving = data.currently_serving || [];
+            if (sessionEl) {
+                if (serving.length === 0) {
+                    sessionEl.innerHTML = '<div class="sessions-empty">No active sessions at the moment.</div>';
+                } else {
+                    sessionEl.innerHTML = serving.map(s => `
+                        <div class="session-card">
+                            <div class="status-dot"></div>
+                            <div class="token-label">${s.token}</div>
+                            <div class="counter-info">Counter ${s.counter_number}</div>
+                            <div class="service-tag" title="${s.service_name}">${s.service_name}</div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        async function callNext() {
+            // Ensure service ID is always an integer
+            const sid = parseInt(state.selectedServiceId) || 0;
+            const lid = sid;
+            const c = parseInt(document.getElementById('counterSelect').value) || 1;
+
+            // Universal Call is now supported for sid=0
+
+            console.log('[Queue] Calling next for service:', sid, 'at counter:', c, 'types:', typeof sid, typeof c);
+
+            try {
+                const r = await API.Queue.callNext(sid, lid, c, state.selectedSector !== 'all' ? state.selectedSector : null);
+                console.log('[Queue] API response:', r);
+                if (r.ok) {
+                    state.currentQueueEntry = r.data;
+                    document.getElementById('currentToken').textContent = r.data.token;
+                    document.getElementById('currentName').textContent = r.data.user_name || 'Customer';
+                    document.getElementById('currentCounter').textContent = c;
+                    if (state.voiceEnabled) Voice.announceToken(r.data.token, c);
+                    Toast.success(`Calling ${r.data.token}`);
+                    refreshDashboard();
+                } else {
+                    console.log('[Queue] Queue empty or error:', r.data);
+                    // Silent recover: Just refresh to update button states (disable them)
+                    // The user considers the "Queue Clear" toast an error, so we suppress it.
+                    refreshDashboard();
+                }
+            } catch (err) {
+                console.error('[Queue] Call Next error:', err);
+                // Only show connectivity errors
+                if (!navigator.onLine) Toast.error('Check network connection.');
+            }
+        }
+
+
+
+        async function markServed() {
+            if (!state.currentQueueEntry) {
+                if (typeof Toast !== 'undefined') Toast.warning('No active token to serve.');
+                return;
+            }
+            const r = await API.Queue.markServed(state.currentQueueEntry.queue_type, state.currentQueueEntry.queue_id);
+            if (r.ok) {
+                if (typeof Voice !== 'undefined') Voice.stop();
+                document.getElementById('currentToken').textContent = '---';
+                state.currentQueueEntry = null;
+                if (typeof Toast !== 'undefined') Toast.success('Session completed.');
+                refreshDashboard();
+            } else {
+                if (typeof Toast !== 'undefined') Toast.error(r.data.error || 'Failed to complete session.');
+            }
+        }
+
+        async function markNoShow() {
+            if (!state.currentQueueEntry) {
+                if (typeof Toast !== 'undefined') Toast.warning('No active token to mark No Show.');
+                return;
+            }
+            const r = await API.Queue.markNoShow(state.currentQueueEntry.queue_type, state.currentQueueEntry.queue_id);
+            if (r.ok) {
+                if (typeof Voice !== 'undefined') Voice.stop();
+                document.getElementById('currentToken').textContent = '---';
+                document.getElementById('currentName').textContent = 'Waiting...'; // Reset text
+                state.currentQueueEntry = null;
+                if (typeof Toast !== 'undefined') Toast.info('Token marked as No Show.');
+                refreshDashboard();
+            } else {
+                if (typeof Toast !== 'undefined') Toast.error(r.data.error || 'Failed to update status.');
+            }
+        }
+
+        async function loadSlots() {
+            const sid = document.getElementById('elderService').value;
+            const dt = document.getElementById('appointmentDate').value;
+            const sel = document.getElementById('timeSlot');
+            if (!sid || !dt) { sel.innerHTML = '<option value="">Slot</option>'; return; }
+            sel.innerHTML = '<option value="">...</option>';
+            try {
+                const res = await API.Appointments.getSlots(sid, sid, dt);
+                if (res.ok && res.data.slots) {
+                    sel.innerHTML = '<option value="">Slot</option>';
+                    res.data.slots.forEach(s => {
+                        if (s.available) {
+                            const start = s.window_start.substring(0, 5);
+                            sel.innerHTML += `<option value="${start}">${start}</option>`;
+                        }
+                    });
+                } else { sel.innerHTML = '<option value="09:00">09:00</option><option value="10:00">10:00</option>'; }
+            } catch (e) { sel.innerHTML = '<option value="09:00">09:00</option>'; }
+        }
+
+        async function submitRegistry() {
+            const name = document.getElementById('elderName').value;
+            const phone = document.getElementById('elderPhone').value;
+            const age = document.getElementById('elderAge').value;
+            const serviceVal = document.getElementById('elderService').value;
+            const dt = document.getElementById('appointmentDate').value;
+            const slot = document.getElementById('timeSlot').value;
+            const isEmergency = document.getElementById('isEmergency').checked;
+
+            if (!name || !phone || !age || !serviceVal || !dt || !slot) {
+                Toast.warning('Fill all fields');
+                return;
+            }
+
+            const payload = {
+                name: name,
+                phone: phone,
+                age: parseInt(age),
+                gender: 'Other',
+                service_id: parseInt(serviceVal),
+                location_id: parseInt(serviceVal),
+                appointment_date: dt,
+                time_window_start: slot,
+                is_emergency: isEmergency
+            };
+
+            try {
+                const r = await API.Queue.addElder(payload);
+                if (r.ok) {
+                    Toast.success('Registered Successfully');
+                    ['elderName', 'elderPhone', 'elderAge', 'elderService', 'timeSlot', 'hospitalLocation', 'bankLocation', 'govLocation', 'restaurantLocation'].forEach(id => {
+                        const el = document.getElementById(id); if (el) el.value = '';
+                    });
+                    document.getElementById('isEmergency').checked = false;
+
+                    // Sector-based redirection as requested
+                    const sectorMap = { hospital: 'hospital-dashboard.html', bank: 'bank-dashboard.html', government: 'government-dashboard.html', restaurant: 'restaurant-dashboard.html' };
+                    const target = sectorMap[state.selectedSector];
+
+                    if (target) {
+                        setTimeout(() => window.location.href = target, 1500);
+                    } else {
+                        refreshDashboard();
+                    }
+                } else {
+                    Toast.error(r.data.error || 'Registration failed');
+                }
+            } catch (err) {
+                console.error('[Registry] Error:', err);
+                Toast.error('Processing error. Check network.');
+            }
+        }
+
+        async function clearCurrentService() {
+            if (!state.currentQueueEntry) return;
+            const res = await API.Queue.cancelCall(state.currentQueueEntry.queue_type, state.currentQueueEntry.queue_id);
+            if (res.ok) {
+                Toast.success('Service call cleared');
+                state.currentQueueEntry = null;
+                document.getElementById('currentToken').textContent = '---';
+                document.getElementById('currentName').textContent = 'Waiting...';
+                refreshDashboard();
+            } else {
+                Toast.error(res.data.error || 'Failed to clear service');
+            }
+        }
+
+
+        function initVisuals() {
+            state.charts.dist = new Chart(document.getElementById('distributionChart'), {
+                type: 'doughnut', data: { labels: ['General', 'Elder'], datasets: [{ data: [0, 0], backgroundColor: ['#4A90E2', '#39FF14'] }] }
+            });
+            state.charts.hourly = new Chart(document.getElementById('hourlyLoadChart'), {
+                type: 'bar', data: {
+                    labels: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'],
+                    datasets: [
+                        { label: 'Check-ins', data: new Array(16).fill(0), backgroundColor: '#8b5cf6' },
+                        { label: 'Served', data: new Array(16).fill(0), backgroundColor: '#c084fc' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+
+        function updateCharts(distData, hourlyData) {
+            if (state.charts.dist) {
+                state.charts.dist.data.datasets[0].data = distData;
+                state.charts.dist.update();
+            }
+            if (state.charts.hourly && hourlyData && hourlyData.length > 0) {
+                const data = hourlyData.filter(item => item.hour >= 7 && item.hour <= 22);
+                state.charts.hourly.data.labels = data.map(d => d.hour_label);
+                state.charts.hourly.data.datasets[0].data = data.map(d => d.check_ins);
+                state.charts.hourly.data.datasets[1].data = data.map(d => d.served || 0);
+                state.charts.hourly.update();
+            }
+        }
+        function toggleVoice() {
+            state.voiceEnabled = !state.voiceEnabled;
+            const btn = document.getElementById('voiceToggle');
+            const statusText = document.getElementById('voiceStatus');
+            if (state.voiceEnabled) {
+                btn.classList.add('active');
+                statusText.textContent = 'Voice ON';
+                Voice.test();
+            } else {
+                btn.classList.remove('active');
+                statusText.textContent = 'Voice OFF';
+                Voice.stop();
+            }
+        }
+        function logout() { Modal.confirm('Are you sure you want to log out?', () => Auth.logout()); }
+    </script>
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

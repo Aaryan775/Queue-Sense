@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Join Queue Page
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Queue - QueueSense</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        /* Reuse dashboard layout */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        /* Service Selection Cards */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-purple);
+        }
+
+        .service-card.selected {
+            border-color: var(--neon-green);
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        .service-card .icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Location Selection */
+        .locations-section {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .locations-section h2 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        .location-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .location-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-item:hover {
+            border-color: var(--primary-purple);
+        }
+
+        .location-item.selected {
+            border-color: var(--neon-green);
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        .location-info h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .location-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .location-stats {
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .location-stats .waiting {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+        }
+
+        /* Queue Preview */
+        .queue-preview {
+            background: var(--gradient-dark);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .queue-preview h3 {
+            color: var(--text-purple-light);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .queue-preview .token {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--neon-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .queue-preview .position {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .join-btn {
+            padding: 1rem 3rem;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="join-queue.html" class="sidebar-nav-item active">
+                    <i class="fas fa-users-line"></i>
+                    <span>Join Queue</span>
+                </a>
+                <a href="appointments.html" class="sidebar-nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>My Appointments</span>
+                </a>
+                <a href="book.html" class="sidebar-nav-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Book Appointment</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="Auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Header -->
+            <div class="page-header">
+                <h1><i class="fas fa-users-line"></i> Join a Queue</h1>
+                <p class="text-muted">Select a service and location to join the queue</p>
+            </div>
+
+            <!-- Step 1: Select Service -->
+            <h2 class="mb-3">Step 1: Select a Service</h2>
+            <div class="services-grid" id="servicesGrid">
+                <!-- Services will be loaded here -->
+            </div>
+
+            <!-- Step 2: Select Location -->
+            <div class="locations-section" id="locationsSection" style="display: none;">
+                <h2><i class="fas fa-map-marker-alt"></i> Step 2: Select Location</h2>
+                <div class="location-list" id="locationsList">
+                    <!-- Locations will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Step 3: Join -->
+            <div class="queue-preview" id="queuePreview" style="display: none;">
+                <h3>Queue Preview</h3>
+                <div class="token" id="estimatedToken">---</div>
+                <div class="position">
+                    Estimated position: <strong id="estimatedPosition">#--</strong>
+                    | Wait time: <strong id="estimatedWait">-- min</strong>
+                </div>
+                <button class="btn btn-primary join-btn" onclick="joinQueue()">
+                    <i class="fas fa-check-circle"></i> Join Queue
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        let selectedService = null;
+        let selectedLocation = null;
+
+        // Helper to translate service names
+        function translateService(name) {
+            if (!name) return 'Service';
+            if (name.toLowerCase().includes('railway')) {
+                return name.replace(/Railway/i, 'Restaurant');
+            }
+            return name;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isLoggedIn()) {
+                window.location.href = '../login.html';
+                return;
+            }
+            await loadServices();
+        });
+
+        // Load services
+        async function loadServices() {
+            try {
+                const response = await API.Services.getAll();
+                if (response.ok) {
+                    renderServices(response.data.services);
+                }
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+        }
+
+        // Render services
+        function renderServices(services) {
+            const grid = document.getElementById('servicesGrid');
+            const icons = {
+                'HOSP': 'fa-hospital',
+                'LAB': 'fa-flask',
+                'BANK': 'fa-building-columns',
+                'LOAN': 'fa-hand-holding-dollar',
+                'GDOC': 'fa-file-alt',
+                'GREG': 'fa-clipboard-list',
+                'RAIL': 'fa-utensils',
+                'RENQ': 'fa-circle-info'
+            };
+
+            grid.innerHTML = services.map(service => `
+                <div class="service-card" data-id="${service.service_id}" onclick="selectService(${service.service_id})">
+                    <div class="icon">
+                        <i class="fas ${icons[service.service_code] || 'fa-cog'}"></i>
+                    </div>
+                    <h3>${translateService(service.service_name)}</h3>
+                    <p>${service.description || 'Service'}</p>
+                    <div class="service-meta">
+                        <span><i class="fas fa-clock"></i> ~${service.service_duration} min</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Select service
+        async function selectService(serviceId) {
+            selectedService = serviceId;
+            selectedLocation = null;
+
+            // Update UI
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.toggle('selected', parseInt(card.dataset.id) === serviceId);
+            });
+
+            // Load locations
+            try {
+                const response = await API.Services.getLocations(serviceId);
+                if (response.ok) {
+                    renderLocations(response.data.locations);
+                    document.getElementById('locationsSection').style.display = 'block';
+                    document.getElementById('queuePreview').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading locations:', error);
+            }
+        }
+
+        // Render locations
+        function renderLocations(locations) {
+            const list = document.getElementById('locationsList');
+            list.innerHTML = locations.map(loc => `
+                <div class="location-item" data-id="${loc.location_id}" onclick="selectLocation(${loc.location_id})">
+                    <div class="location-info">
+                        <h4>${loc.location_name}</h4>
+                        <p>${loc.address || 'Address not available'}</p>
+                    </div>
+                    <div class="location-stats">
+                        <div class="waiting">${loc.waiting_count || 0}</div>
+                        <div>waiting</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Select location
+        async function selectLocation(locationId) {
+            selectedLocation = locationId;
+
+            // Update UI
+            document.querySelectorAll('.location-item').forEach(item => {
+                item.classList.toggle('selected', parseInt(item.dataset.id) === locationId);
+            });
+
+            // Get queue status
+            try {
+                const response = await API.Queue.getStatus(selectedService, locationId);
+                if (response.ok) {
+                    const total = (response.data.elder_count || 0) + (response.data.normal_count || 0);
+                    document.getElementById('estimatedPosition').textContent = `#${total + 1}`;
+                    document.getElementById('estimatedWait').textContent =
+                        `${(total + 1) * 5} min`;
+                    document.getElementById('queuePreview').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error getting queue status:', error);
+            }
+        }
+
+        // Join queue
+        async function joinQueue() {
+            if (!selectedService || !selectedLocation) {
+                Toast.warning('Please select a service and location');
+                return;
+            }
+
+            try {
+                const response = await API.Queue.join(selectedService, selectedLocation);
+                if (response.ok) {
+                    Toast.success(`Joined queue! Your token: ${response.data.token}`);
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    Toast.error(response.data.error || 'Failed to join queue');
+                }
+            } catch (error) {
+                Toast.error('Error joining queue');
+            }
+        }
+    </script>
+</body>
+
+</html>

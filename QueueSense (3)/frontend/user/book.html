@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Book Appointment Page
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - QueueSense</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand i {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            margin-top: 1.5rem;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        /* Booking Form */
+        .booking-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            max-width: 600px;
+        }
+
+        .booking-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control,
+        .form-select {
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Time Slots */
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .time-slot {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-purple);
+        }
+
+        .time-slot.selected {
+            border-color: var(--neon-green);
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        .time-slot.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f3f4f6;
+        }
+
+        .time-slot .time {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .time-slot .slots-left {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Summary */
+        .booking-summary {
+            background: var(--light-gray);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .booking-summary h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row .label {
+            color: var(--text-muted);
+        }
+
+        .summary-row .value {
+            font-weight: 600;
+        }
+
+        .book-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #ef4444;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="join-queue.html" class="sidebar-nav-item">
+                    <i class="fas fa-users-line"></i>
+                    <span>Join Queue</span>
+                </a>
+                <a href="appointments.html" class="sidebar-nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>My Appointments</span>
+                </a>
+                <a href="book.html" class="sidebar-nav-item active">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Book Appointment</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="Auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Header -->
+            <div class="page-header">
+                <h1><i class="fas fa-calendar-plus"></i> Book an Appointment</h1>
+                <p class="text-muted">Schedule your visit in advance and skip the wait</p>
+            </div>
+
+            <!-- Booking Form -->
+            <div class="booking-card">
+                <form id="bookingForm">
+                    <!-- Service Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Select Service</label>
+                        <select class="form-select" id="serviceSelect" required>
+                            <option value="">Choose a service...</option>
+                        </select>
+                    </div>
+
+                    <!-- Location Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Select Location</label>
+                        <select class="form-select" id="locationSelect" required disabled>
+                            <option value="">Choose a location...</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Select Date</label>
+                        <input type="date" class="form-control" id="dateSelect" required>
+                    </div>
+
+                    <!-- Time Slots (Hidden for Auto-Allocation) -->
+                    <div class="form-group" style="display: none;">
+                        <label class="form-label">Select Time Window</label>
+                        <div class="time-slots" id="timeSlots">
+                            <p class="text-muted" style="grid-column: 1/-1; text-align: center;">
+                                Select service, location and date to see available slots
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes (Optional)</label>
+                        <textarea class="form-control" id="notes" rows="2"
+                            placeholder="Any special requirements..."></textarea>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="booking-summary" id="summary" style="display: none;">
+                        <h3><i class="fas fa-receipt"></i> Booking Summary</h3>
+                        <div class="summary-row">
+                            <span class="label">Service</span>
+                            <span class="value" id="sumService">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Location</span>
+                            <span class="value" id="sumLocation">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Date</span>
+                            <span class="value" id="sumDate">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Time Window</span>
+                            <span class="value" id="sumTime">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-primary book-btn">
+                        <i class="fas fa-check-circle"></i> Confirm Booking
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        let selectedSlot = null;
+
+        // Helper to translate service names
+        function translateService(name) {
+            if (!name) return 'Service';
+            if (name.toLowerCase().includes('railway')) {
+                return name.replace(/Railway/i, 'Restaurant');
+            }
+            return name;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isLoggedIn()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateSelect').min = today;
+            document.getElementById('dateSelect').value = today;
+
+            await loadServices();
+
+            // Check URL params
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('service')) {
+                document.getElementById('serviceSelect').value = params.get('service');
+                await loadLocations();
+            }
+        });
+
+        // Load services
+        async function loadServices() {
+            try {
+                const response = await API.Services.getAll();
+                if (response.ok && response.data.services && response.data.services.length > 0) {
+                    const select = document.getElementById('serviceSelect');
+
+                    // Keep the default option
+                    const defaultOption = select.options[0];
+                    select.innerHTML = '';
+                    select.appendChild(defaultOption);
+
+                    response.data.services.forEach(s => {
+                        const option = document.createElement('option');
+                        option.value = s.service_id;
+                        option.textContent = translateService(s.service_name);
+                        select.appendChild(option);
+                    });
+                } else {
+                    console.warn('Failed to load services or empty list returned. Using fallback/hardcoded options if available.');
+                    // If we had hardcoded options, they would remain. But currently we don't have them in HTML.
+                    // Let's add them dynamically as fallback if API fails
+                    const select = document.getElementById('serviceSelect');
+                    if (select.options.length <= 1) { // Only default option exists
+                        const fallbackServices = [
+                            { id: 1, name: 'Hospital' },
+                            { id: 2, name: 'Bank' },
+                            { id: 3, name: 'Government' },
+                            { id: 4, name: 'Restaurant' }
+                        ];
+                        fallbackServices.forEach(s => {
+                            const option = document.createElement('option');
+                            option.value = s.id;
+                            option.textContent = s.name;
+                            select.appendChild(option);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading services:', error);
+                // Fallback on error
+                const select = document.getElementById('serviceSelect');
+                if (select.options.length <= 1) {
+                    const fallbackServices = [
+                        { id: 1, name: 'Hospital' },
+                        { id: 2, name: 'Bank' },
+                        { id: 3, name: 'Government' },
+                        { id: 4, name: 'Restaurant' }
+                    ];
+                    fallbackServices.forEach(s => {
+                        const option = document.createElement('option');
+                        option.value = s.id;
+                        option.textContent = s.name;
+                        select.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        // Service change handler
+        document.getElementById('serviceSelect').addEventListener('change', loadLocations);
+
+        // Load locations
+        async function loadLocations() {
+            const serviceId = document.getElementById('serviceSelect').value;
+            const locSelect = document.getElementById('locationSelect');
+
+            if (!serviceId) {
+                locSelect.disabled = true;
+                locSelect.innerHTML = '<option value="">Choose a location...</option>';
+                return;
+            }
+
+            // Show loading state
+            locSelect.innerHTML = '<option value="">Loading locations...</option>';
+            locSelect.disabled = true;
+
+            try {
+                const response = await API.Services.getLocations(serviceId);
+
+                if (response.ok && response.data.locations && response.data.locations.length > 0) {
+                    locSelect.innerHTML = '<option value="">Choose a location...</option>';
+                    response.data.locations.forEach(l => {
+                        const option = document.createElement('option');
+                        option.value = l.location_id;
+                        option.textContent = l.location_name;
+                        locSelect.appendChild(option);
+                    });
+                    locSelect.disabled = false;
+                } else {
+                    console.warn('No locations found or API failed. Using fallback for demo.');
+                    // Fallback for demo purposes if API fails
+                    locSelect.innerHTML = '<option value="">Choose a location...</option>';
+                    const fallbackLocations = [
+                        { id: 1, name: 'Main Branch' },
+                        { id: 2, name: 'City Center' },
+                        { id: 3, name: 'Westside Branch' }
+                    ];
+                    fallbackLocations.forEach(l => {
+                        const option = document.createElement('option');
+                        option.value = l.id;
+                        option.textContent = l.name;
+                        locSelect.appendChild(option);
+                    });
+                    locSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error loading locations:', error);
+                // Fallback handling
+                locSelect.innerHTML = '<option value="">Choose a location...</option>';
+                const fallbackLocations = [
+                    { id: 1, name: 'Main Branch' },
+                    { id: 2, name: 'City Center' },
+                    { id: 3, name: 'Westside Branch' }
+                ];
+                fallbackLocations.forEach(l => {
+                    const option = document.createElement('option');
+                    option.value = l.id;
+                    option.textContent = l.name;
+                    locSelect.appendChild(option);
+                });
+                locSelect.disabled = false;
+            }
+        }
+
+        // Location/date change handlers
+        document.getElementById('locationSelect').addEventListener('change', loadSlots);
+        document.getElementById('dateSelect').addEventListener('change', loadSlots);
+
+        // Load time slots
+        async function loadSlots() {
+            const serviceId = document.getElementById('serviceSelect').value;
+            const locationId = document.getElementById('locationSelect').value;
+            const date = document.getElementById('dateSelect').value;
+            const slotsContainer = document.getElementById('timeSlots');
+            selectedSlot = null; // Reset selection
+
+            if (!serviceId || !locationId || !date) {
+                // Keep hidden
+                return;
+            }
+
+            // Show loading
+            slotsContainer.innerHTML = '<p class="text-muted" style="grid-column: 1/-1; text-align: center;">Loading slots...</p>';
+            document.getElementById('serviceSelect').closest('.form-group').nextElementSibling.nextElementSibling.nextElementSibling.style.display = 'block';
+
+
+            try {
+                const response = await API.Appointments.getSlots(serviceId, locationId, date);
+                slotsContainer.innerHTML = ''; // Clear loading message
+                document.getElementById('serviceSelect').closest('.form-group').nextElementSibling.nextElementSibling.nextElementSibling.style.display = 'block';
+
+                if (response.ok && response.data.slots && response.data.slots.length > 0) {
+                    response.data.slots.forEach((slot, index) => {
+                        const start = slot.window_start.slice(0, 5);
+                        const end = slot.window_end.slice(0, 5);
+                        const isAvailable = slot.available || slot.spots_left > 0;
+
+                        const slotDiv = document.createElement('div');
+                        slotDiv.className = `time-slot ${isAvailable ? '' : 'unavailable'}`;
+                        slotDiv.dataset.index = index;
+                        if (isAvailable) {
+                            slotDiv.onclick = () => selectSlot(index, start, end);
+                        }
+                        slotDiv.innerHTML = `
+                            <div class="time">${start} - ${end}</div>
+                            <div class="slots-left">${isAvailable ? (slot.spots_left + ' spots') : 'Full'}</div>
+                        `;
+                        slotsContainer.appendChild(slotDiv);
+                    });
+
+                    // Optional: Don't auto-select if there are many options, but here we can keep it for convenience
+                    const firstAvailableIndex = response.data.slots.findIndex(s => s.available || s.spots_left > 0);
+                    if (firstAvailableIndex !== -1) {
+                        const firstSlot = response.data.slots[firstAvailableIndex];
+                        selectSlot(firstAvailableIndex, firstSlot.window_start.slice(0, 5), firstSlot.window_end.slice(0, 5));
+                    }
+                } else {
+                    slotsContainer.innerHTML = '<p class="text-muted" style="grid-column: 1/-1; text-align: center;">No slots available for this date.</p>';
+                    document.getElementById('summary').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading slots:', error);
+                slotsContainer.innerHTML = '<p class="text-danger" style="grid-column: 1/-1; text-align: center;">Failed to load availability</p>';
+                Toast.error('Failed to load availability');
+            }
+        }
+
+        // Select slot
+        function selectSlot(index, start, end) {
+            selectedSlot = { start, end };
+
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            document.querySelector(`.time-slot[data-index="${index}"]`).classList.add('selected');
+
+            // Update summary
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('sumService').textContent =
+                document.getElementById('serviceSelect').selectedOptions[0].text;
+            document.getElementById('sumLocation').textContent =
+                document.getElementById('locationSelect').selectedOptions[0].text;
+            document.getElementById('sumDate').textContent =
+                new Date(document.getElementById('dateSelect').value).toLocaleDateString();
+            document.getElementById('sumTime').textContent = `${start} - ${end}`;
+        }
+
+        // Form submit
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!selectedSlot) {
+                Toast.warning('Please select a time slot');
+                return;
+            }
+
+            const data = {
+                service_id: parseInt(document.getElementById('serviceSelect').value),
+                location_id: parseInt(document.getElementById('locationSelect').value),
+                date: document.getElementById('dateSelect').value,
+                time_window_start: selectedSlot.start,
+                time_window_end: selectedSlot.end,
+                notes: document.getElementById('notes').value
+            };
+
+            const response = await API.Appointments.book(data);
+            if (response.ok) {
+                Toast.success('Appointment booked successfully!');
+                setTimeout(() => {
+                    window.location.href = 'appointments.html';
+                }, 2000);
+            } else {
+                Toast.error(response.data.error || 'Failed to book appointment');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard - QueueSense</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <style>
+        :root {
+            --sector-color: #16a34a;
+            --sector-light: #dcfce7;
+            --sector-mid: #86efac;
+            --sector-dark: #14532d;
+        }
+
+        .dashboard-carousel {
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            background: #000;
+        }
+
+        .dashboard-carousel .carousel-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: brightness(0.8);
+        }
+
+        .dashboard-carousel .carousel-caption {
+            bottom: 15%;
+            text-align: left;
+            left: 5%;
+            right: 5%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 6px solid #16a34a;
+            max-width: 60%;
+        }
+
+        .dashboard-carousel .carousel-caption h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-carousel .carousel-caption p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Slot Selector Grid */
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .slot-pill {
+            padding: 10px 5px;
+            border-radius: 8px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .slot-pill:hover {
+            border-color: #16a34a;
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .slot-pill.selected {
+            background: #16a34a !important;
+            color: white !important;
+            border-color: #16a34a !important;
+            transform: scale(0.98);
+        }
+
+        .slot-pill.booked {
+            display: none;
+        }
+
+        /* Updated slot grid spacing */
+        #slotGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .slot-loading {
+            grid-column: span 3;
+            padding: 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        .sidebar {
+            width: 260px;
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            color: var(--text-purple-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(22, 163, 74, 0.2);
+            color: #4ade80;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            color: #ef4444;
+            background: none;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .sector-header-bar {
+            background: linear-gradient(135deg, #15803d, #16a34a);
+            color: white;
+            border-radius: 12px;
+            padding: 1.25rem 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sector-header-bar .sector-icon {
+            font-size: 2.5rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .stat-card .value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--sector-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card.highlight {
+            background: var(--sector-color);
+        }
+
+        .stat-card.highlight .value {
+            color: white;
+        }
+
+        .stat-card.highlight .label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sessions-monitor {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--sector-color);
+        }
+
+        .sessions-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0 1rem;
+        }
+
+        .session-card {
+            flex: 0 0 220px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .session-card .token-label {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--sector-color);
+        }
+
+        .session-card .status-dot {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+
+        .sessions-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+            padding: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .queue-panel {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+        }
+
+        .registry-panel {
+            background: #f0fdf4 !important;
+            border: 2px solid #bbf7d0 !important;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+
+        .op-label {
+            color: #6c757d;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-call-solid {
+            background-color: #16a34a !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-call-solid:hover {
+            background-color: #15803d !important;
+        }
+
+        .btn-served-solid {
+            background-color: #0d6efd !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-noshow-solid {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn:disabled {
+            opacity: 0.6 !important;
+            background-color: #d1d5db !important;
+            border-color: #9ca3af !important;
+            color: #4b5563 !important;
+            cursor: not-allowed !important;
+        }
+
+        .voice-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(22, 163, 74, 0.1);
+            border: 1px solid var(--sector-color);
+            border-radius: 20px;
+            color: var(--sector-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .voice-toggle.active {
+            background: var(--sector-color);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-hospital" style="color:#4ade80"></i><span>QueueSense</span>
+            </div>
+            <nav class="sidebar-nav mt-4">
+                <a href="dashboard.html" class="sidebar-nav-item"><i class="fas fa-arrow-left"></i><span>All
+                        Sectors</span></a>
+                <a href="hospital-dashboard.html" class="sidebar-nav-item active"><i
+                        class="fas fa-hospital"></i><span>Hospital</span></a>
+                <a href="queue-management.html" class="sidebar-nav-item"><i class="fas fa-users-line"></i><span>Queue
+                        Management</span></a>
+                <a href="elder-assist.html" class="sidebar-nav-item"><i
+                        class="fas fa-hand-holding-heart"></i><span>Elder Assisted</span></a>
+                <a href="appointments.html" class="sidebar-nav-item"><i
+                        class="fas fa-calendar-check"></i><span>Appointments</span></a>
+                <a href="analytics.html" class="sidebar-nav-item"><i
+                        class="fas fa-chart-line"></i><span>Analytics</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()"><i
+                        class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Sector Header Bar -->
+            <div class="sector-header-bar">
+                <div class="sector-icon">🏥</div>
+                <div>
+                    <h1 class="mb-0 fw-bold" style="font-size:1.6rem;">Hospital Dashboard</h1>
+                    <p class="mb-0 opacity-75">Hospital Queue Management — Real-time Operations</p>
+                </div>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <select class="form-select form-select-sm fw-bold" id="dashboardServiceFilter"
+                        style="width:230px; border-color:#4ade80;"
+                        onchange="updateContext(this.value); state.selectedServiceId=parseInt(this.value); refreshDashboard();">
+                        <option value="0">🔷 All Hospital Services</option>
+                    </select>
+                    <button class="voice-toggle active" id="voiceToggle" onclick="toggleVoice()">
+                        <i class="fas fa-volume-high"></i><span id="voiceStatus">Voice ON</span>
+                    </button>
+                    <div class="d-flex align-items-center gap-1 p-1 rounded" style="background:#16a34a; color:white;">
+                        <small class="ms-1 fw-bold">Counter</small>
+                        <select class="form-select form-select-sm border-0 bg-transparent text-white fw-bold"
+                            id="counterSelect" style="width:60px;">
+                            <option value="1" style="color:#000">01</option>
+                            <option value="2" style="color:#000">02</option>
+                            <option value="3" style="color:#000">03</option>
+                            <option value="4" style="color:#000">04</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sector Carousel -->
+            <div id="sectorCarousel" class="carousel slide dashboard-carousel" data-bs-ride="carousel"
+                data-bs-interval="12000" data-bs-pause="false">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200"
+                            alt="Hospital Reception" style="object-fit:cover; height:350px;">
+                        <div class="carousel-caption">
+                            <h3>Advanced Healthcare</h3>
+                            <p>Optimizing patient flow with real-time queue intelligence.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1200"
+                            alt="Medical Care" style="object-fit:cover; height:350px;">
+                        <div class="carousel-caption">
+                            <h3>Expert Specialists</h3>
+                            <p>Connecting you with the best medical professionals instantly.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1200"
+                            alt="Modern Facilities">
+                        <div class="carousel-caption">
+                            <h3>Modern Infrastructure</h3>
+                            <p>Cutting-edge medical facilities for world-class treatment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="value" id="waitingCount">0</div>
+                    <div class="label">Total Waiting</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="servingCount">0</div>
+                    <div class="label">Serving</div>
+                </div>
+                <div class="stat-card highlight">
+                    <div class="value" id="servedCount">0</div>
+                    <div class="label">Total Served</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="elderCount" style="color:#16a34a">0</div>
+                    <div class="label">Elder Wait</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="avgWait">--</div>
+                    <div class="label">Avg Wait</div>
+                </div>
+            </div>
+
+            <!-- Live Sessions -->
+            <div class="sessions-monitor">
+                <h3 class="fs-6 fw-bold mb-3"><i class="fas fa-satellite-dish me-2" style="color:#16a34a"></i>Live
+                    Branch Activity <small class="text-muted fw-normal">| All active sessions</small></h3>
+                <div id="liveSessions" class="sessions-container py-2">
+                    <div class="sessions-empty">No active sessions.</div>
+                </div>
+            </div>
+
+            <!-- Operational Panel -->
+            <div class="row g-4 mt-2">
+                <div class="col-12">
+                    <div class="enterprise-card d-flex align-items-center justify-content-between p-4"
+                        style="min-height:140px; background:white; border-radius:12px; box-shadow:var(--shadow-sm); border-left: 5px solid #16a34a;">
+                        <div>
+                            <div class="op-label">Now Serving</div>
+                            <div class="d-flex align-items-baseline gap-3">
+                                <span class="display-3 fw-bold text-dark" id="currentToken"
+                                    style="font-family:'JetBrains Mono'">---</span>
+                                <div class="d-flex flex-column">
+                                    <span class="badge px-3 py-2 rounded-pill mb-2"
+                                        style="background:#dcfce7; color:#16a34a; width:fit-content;"><i
+                                            class="fas fa-desktop me-2"></i>Counter <span
+                                            id="currentCounter">1</span></span>
+                                    <span id="currentName" class="h5 mb-0 fw-semibold text-muted">Waiting...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <button id="btnCancelCall" class="btn btn-outline-secondary btn-lg px-3"
+                                onclick="clearCurrentService()" style="display:none;"><i
+                                    class="fas fa-undo me-2"></i>Clear</button>
+                            <button id="btnNoShow" class="btn btn-noshow-solid btn-lg px-4" onclick="markNoShow()"><i
+                                    class="fas fa-user-xmark me-2"></i>No Show</button>
+                            <button id="btnServed" class="btn btn-served-solid btn-lg px-4" onclick="markServed()"><i
+                                    class="fas fa-check me-2"></i>Served</button>
+                            <button id="btnCallNext" class="btn btn-call-solid btn-lg px-4" onclick="callNext()"><i
+                                    class="fas fa-bullhorn me-2"></i>Call Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Walk-in Registry -->
+                <div class="col-12">
+                    <div class="queue-panel registry-panel p-4" style="min-height:180px;">
+                        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                            <h2 class="h5 mb-0 fw-bold"><i class="fas fa-user-plus me-2"
+                                    style="color:#16a34a"></i>Walk-in Registry</h2>
+                            <span class="badge bg-light text-muted fw-normal">Hospital Registration</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12"><label class="form-label small fw-bold text-muted mb-1">Customer
+                                    Name</label><input type="text" id="elderName" class="form-control"
+                                    placeholder="Full Name"></div>
+                            <div class="col-12"><label class="form-label small fw-bold text-muted mb-1">Phone
+                                    Number</label><input type="tel" id="elderPhone" class="form-control"
+                                    placeholder="10 Digits" maxlength="10"></div>
+                            <div class="col-12"><label
+                                    class="form-label small fw-bold text-muted mb-1">Age</label><input type="number"
+                                    id="elderAge" class="form-control" placeholder="Age" min="1" max="120"></div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted mb-1">Hospital Location</label>
+                                <select id="hospitalLocation" class="form-select">
+                                    <option value="" disabled selected>Select Location</option>
+                                    <option value="sunrise">Sunrise Hospital, Ahmedabad</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted mb-1">Hospital Service</label>
+                                <select id="elderService" class="form-select" onchange="loadSlots()">
+                                    <option value="">Loading...</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted mb-1">Appointment Date</label>
+                                <input type="date" id="appointmentDate" class="form-control" onchange="loadSlots()">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted mb-1">Available Slots</label>
+                                <div id="slotGrid" class="slot-grid">
+                                    <div class="slot-loading">Select a service and date</div>
+                                </div>
+                                <input type="hidden" id="timeSlot" value="">
+                            </div>
+                            <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                                <div class="form-check m-0">
+                                    <input class="form-check-input" type="checkbox" id="isEmergency">
+                                    <label class="form-check-label small fw-bold text-danger">Priority /
+                                        Emergency</label>
+                                </div>
+                                <button class="btn btn-lg fw-bold px-5" style="background:#16a34a; color:white;"
+                                    onclick="submitRegistry()"><i class="fas fa-plus me-1"></i>REGISTER PATIENT</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-4 mt-2">
+                <div class="col-12">
+                    <div class="chart-card">
+                        <h3 class="fs-6 fw-bold mb-4"><i class="fas fa-chart-line me-2" style="color:#16a34a"></i>Hourly
+                            Queue Load</h3>
+                        <div style="height:300px;"><canvas id="hourlyLoadChart"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="queue-panel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h5 mb-0 fw-bold"><i class="fas fa-list me-2"></i>Live Queue <small
+                                    id="remainingCount" class="text-muted fs-6 ms-2"></small></h2>
+                        </div>
+                        <div id="queueList" class="queue-table-container"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="chart-card">
+                        <h3 class="fs-6 fw-bold mb-4"><i class="fas fa-chart-pie me-2"
+                                style="color:#16a34a"></i>Distribution</h3>
+                        <div style="height:250px;"><canvas id="distributionChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        // Hospital sector: service name keywords to filter
+        const SECTOR_KEYWORDS = ['hospital', 'opd', 'lab', 'pharmacy', 'emergency', 'health', 'clinic', 'doctor'];
+
+        let state = {
+            voiceEnabled: true,
+            currentQueueEntry: null,
+            selectedServiceId: 0,
+            selectedLocationId: 0,
+            poller: null,
+            charts: { dist: null, hourly: null }
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!Auth.isStaff()) return window.location.href = '../login.html';
+            await loadSectorServices();
+            setupDatePicker();
+            initVisuals();
+            const poller = new Poller(refreshDashboard, 5000);
+            poller.start();
+            window.addEventListener('focus', () => refreshDashboard());
+        });
+
+        async function loadSectorServices() {
+            try {
+                const resp = await API.Services.getAll();
+                if (resp && resp.ok && resp.data.services) {
+                    const all = resp.data.services;
+                    const filtered = all.filter(s => {
+                        const name = s.service_name.toLowerCase();
+                        return SECTOR_KEYWORDS.some(k => name.includes(k));
+                    });
+                    populateDropdowns(filtered);
+                }
+            } catch (e) {
+                console.warn('Could not load services');
+            }
+        }
+
+        function populateDropdowns(services) {
+            const svcFilter = document.getElementById('dashboardServiceFilter');
+            svcFilter.innerHTML = '<option value="0">🔷 All Hospital Services</option>';
+            services.forEach(s => { svcFilter.innerHTML += `<option value="${s.service_id}">${s.service_name}</option>`; });
+
+            const regSelect = document.getElementById('elderService');
+            regSelect.innerHTML = '<option value="">Select Hospital Service</option>';
+            services.forEach(s => { regSelect.innerHTML += `<option value="${s.service_id}">${s.service_name}</option>`; });
+        }
+
+        function updateContext(val) {
+            const serviceId = parseInt(val);
+            const registrySelect = document.getElementById('elderService');
+            if (serviceId === 0) { registrySelect.value = ''; registrySelect.style.borderColor = ''; }
+            else { registrySelect.value = serviceId; registrySelect.style.borderColor = '#16a34a'; loadSlots(); }
+        }
+
+        function setupDatePicker() {
+            const el = document.getElementById('appointmentDate');
+            const now = new Date().toISOString().split('T')[0];
+            el.min = now; el.value = now;
+            loadSlots();
+        }
+
+        async function loadSlots() {
+            const sid = document.getElementById('elderService').value;
+            const dt = document.getElementById('appointmentDate').value;
+            const grid = document.getElementById('slotGrid');
+            const hiddenVal = document.getElementById('timeSlot');
+            hiddenVal.value = '';
+
+            if (!sid || !dt) { grid.innerHTML = '<div class="slot-loading">Select service & date</div>'; return; }
+            grid.innerHTML = '<div class="slot-loading text-success"><i class="fas fa-spinner fa-spin me-2"></i>Loading slots...</div>';
+
+            try {
+                const res = await API.Appointments.getSlots(sid, sid, dt);
+                grid.innerHTML = '';
+                let bookedSlots = [];
+                if (res.ok && res.data.slots) {
+                    bookedSlots = res.data.slots.filter(s => !s.available).map(s => s.window_start.substring(0, 5));
+                }
+
+                const generateDaySlots = () => {
+                    const allSlots = [];
+                    // Regular Slots: 09:00 to 19:00 (7 PM)
+                    for (let h = 9; h < 19; h++) {
+                        for (let m = 0; m < 60; m += 30) {
+                            const hh = h < 10 ? `0${h}` : `${h}`;
+                            const mm = m === 0 ? '00' : '30';
+                            let eh = h;
+                            let em = m + 30;
+                            if (em === 60) { eh++; em = 0; }
+                            const ehh = eh < 10 ? `0${eh}` : `${eh}`;
+                            const emm = em === 0 ? '00' : '30';
+                            allSlots.push({ start: `${hh}:${mm}`, end: `${ehh}:${emm}`, type: 'regular' });
+                        }
+                    }
+                    // Emergency Slots: 19:00 to 00:00 (Midnight)
+                    for (let h = 19; h < 24; h++) {
+                        for (let m = 0; m < 60; m += 30) {
+                            const hh = h < 10 ? `0${h}` : `${h}`;
+                            const mm = m === 0 ? '00' : '30';
+                            let eh = h;
+                            let em = m + 30;
+                            if (em === 60) { eh++; em = 0; }
+                            if (eh === 24) eh = 0;
+                            const ehh = eh < 10 ? `0${eh}` : `${eh}`;
+                            const emm = em === 0 ? '00' : '30';
+                            allSlots.push({ start: `${hh}:${mm}`, end: `${ehh}:${emm}`, type: 'emergency' });
+                        }
+                    }
+                    return allSlots;
+                };
+
+                const slots = generateDaySlots();
+                slots.forEach(s => {
+                    const isBooked = bookedSlots.includes(s.start);
+                    const pill = document.createElement('div');
+                    pill.className = `slot-pill ${isBooked ? 'booked' : ''}`;
+                    if (s.type === 'emergency') {
+                        pill.style.borderColor = '#dc3545';
+                        pill.style.color = '#dc3545';
+                    }
+                    pill.innerHTML = `${s.start} - ${s.end}${s.type === 'emergency' ? '<br><small>EMERGENCY</small>' : ''}`;
+
+                    if (!isBooked) {
+                        pill.onclick = () => {
+                            document.querySelectorAll('.slot-pill').forEach(p => p.classList.remove('selected'));
+                            pill.classList.add('selected');
+                            hiddenVal.value = s.start;
+                        };
+                    }
+                    grid.appendChild(pill);
+                });
+
+                if (grid.querySelectorAll('.slot-pill:not(.booked)').length === 0) {
+                    grid.innerHTML = '<div class="slot-loading text-danger">No available slots.</div>';
+                }
+
+            } catch (e) {
+                grid.innerHTML = '<div class="slot-loading text-muted">Error loading slots.</div>';
+            }
+        }
+
+        async function refreshDashboard() {
+            const sid = parseInt(state.selectedServiceId) || 0;
+            const lid = sid;
+            try {
+                const res = await API.Analytics.getDashboard({ service_id: sid, location_id: lid, sector: 'hospital' });
+                if (res.ok) {
+                    document.getElementById('waitingCount').textContent = res.data.total_waiting || 0;
+                    document.getElementById('servingCount').textContent = res.data.currently_serving || 0;
+                    document.getElementById('servedCount').textContent = res.data.served_today || 0;
+                    document.getElementById('elderCount').textContent = res.data.elder_waiting || 0;
+                    const avg = res.data.avg_wait_time_minutes;
+                    document.getElementById('avgWait').textContent = (avg > 0) ? avg + 'm' : 'New';
+                    updateCharts([res.data.elder_waiting || 0, res.data.normal_waiting || 0, res.data.elder_served || 0, res.data.normal_served || 0], res.data.hourly_distribution || []);
+                }
+            } catch (e) { console.error('[Dashboard] Analytics error:', e); }
+
+            try {
+                const q = await API.Queue.getStatus(sid, lid, 'hospital');
+                if (q.ok) {
+                    renderQueue(q.data);
+                    const totalWaiting = q.data.total_waiting_count || 0;
+                    const activeCounter = parseInt(document.getElementById('counterSelect').value) || 1;
+                    const myEntry = (q.data.currently_serving || []).find(x => x.counter_number === activeCounter);
+                    if (myEntry) {
+                        if (!state.currentQueueEntry || state.currentQueueEntry.token !== myEntry.token) {
+                            state.currentQueueEntry = myEntry;
+                            document.getElementById('currentToken').textContent = myEntry.token;
+                            document.getElementById('currentName').textContent = myEntry.user_name || 'Patient';
+                            document.getElementById('currentCounter').textContent = activeCounter;
+                        }
+                    } else if (state.currentQueueEntry) {
+                        state.currentQueueEntry = null;
+                        document.getElementById('currentToken').textContent = '---';
+                        document.getElementById('currentName').textContent = '---';
+                    }
+                    const isServing = !!state.currentQueueEntry;
+                    const btnCallNext = document.getElementById('btnCallNext');
+                    if (btnCallNext) { btnCallNext.disabled = (totalWaiting === 0); }
+                    const btnServed = document.getElementById('btnServed');
+                    if (btnServed) btnServed.disabled = !isServing;
+                    const btnNoShow = document.getElementById('btnNoShow');
+                    if (btnNoShow) btnNoShow.disabled = !isServing;
+                    const btnCancelCall = document.getElementById('btnCancelCall');
+                    if (btnCancelCall) btnCancelCall.style.display = isServing ? 'block' : 'none';
+                }
+            } catch (e) { console.error('[Dashboard] Queue error:', e); }
+        }
+
+        function renderQueue(data) {
+            const el = document.getElementById('queueList');
+            const m = [...(data.elder_queue || []), ...(data.normal_queue || [])];
+            const remainingEl = document.getElementById('remainingCount');
+            if (remainingEl) remainingEl.textContent = `(${m.length} Remaining)`;
+            if (m.length === 0) { el.innerHTML = '<div class="p-5 text-center text-muted">No pending tokens.</div>'; }
+            else { el.innerHTML = m.map(i => `<div class="p-3 border-bottom d-flex align-items-center"><div class="h4 mb-0 me-3 fw-bold" style="font-family:JetBrains Mono">${i.token}</div><div class="flex-grow-1"><strong>${i.user_name || 'Walk-in'}</strong></div><span class="badge ${i.queue_type === 'elder' ? 'bg-success' : 'bg-primary'}">${i.queue_type.toUpperCase()}</span></div>`).join(''); }
+            const sessionEl = document.getElementById('liveSessions');
+            const serving = data.currently_serving || [];
+            if (sessionEl) {
+                if (serving.length === 0) { sessionEl.innerHTML = '<div class="sessions-empty">No active sessions.</div>'; }
+                else { sessionEl.innerHTML = serving.map(s => `<div class="session-card"><div class="status-dot"></div><div class="token-label">${s.token}</div><div style="font-size:0.85rem;color:#64748b;">Counter ${s.counter_number}</div><div style="font-size:0.7rem;color:#64748b;">${s.service_name}</div></div>`).join(''); }
+            }
+        }
+
+        async function callNext() {
+            const sid = parseInt(state.selectedServiceId) || 0;
+            const lid = sid;
+            const c = parseInt(document.getElementById('counterSelect').value) || 1;
+            try {
+                const r = await API.Queue.callNext(sid, lid, c, 'hospital');
+                if (r.ok) {
+                    state.currentQueueEntry = r.data;
+                    document.getElementById('currentToken').textContent = r.data.token;
+                    document.getElementById('currentName').textContent = r.data.user_name || 'Patient';
+                    document.getElementById('currentCounter').textContent = c;
+                    if (state.voiceEnabled) Voice.announceToken(r.data.token, c);
+                    Toast.success(`Calling ${r.data.token}`);
+                    refreshDashboard();
+                } else { refreshDashboard(); }
+            } catch (err) { if (!navigator.onLine) Toast.error('Check network connection.'); }
+        }
+
+        async function markServed() {
+            if (!state.currentQueueEntry) { Toast.warning('No active token.'); return; }
+            const r = await API.Queue.markServed(state.currentQueueEntry.queue_type, state.currentQueueEntry.queue_id);
+            if (r.ok) { Voice.stop(); document.getElementById('currentToken').textContent = '---'; state.currentQueueEntry = null; Toast.success('Session completed.'); refreshDashboard(); }
+            else { Toast.error(r.data.error || 'Failed.'); }
+        }
+
+        async function markNoShow() {
+            if (!state.currentQueueEntry) { Toast.warning('No active token.'); return; }
+            const r = await API.Queue.markNoShow(state.currentQueueEntry.queue_type, state.currentQueueEntry.queue_id);
+            if (r.ok) { Voice.stop(); document.getElementById('currentToken').textContent = '---'; document.getElementById('currentName').textContent = 'Waiting...'; state.currentQueueEntry = null; Toast.info('Marked No Show.'); refreshDashboard(); }
+            else { Toast.error(r.data.error || 'Failed.'); }
+        }
+
+        async function submitRegistry() {
+            const name = document.getElementById('elderName').value;
+            const phone = document.getElementById('elderPhone').value;
+            const age = document.getElementById('elderAge').value;
+            const serviceVal = document.getElementById('elderService').value;
+            const dt = document.getElementById('appointmentDate').value;
+            const slot = document.getElementById('timeSlot').value;
+            const isEmergency = document.getElementById('isEmergency').checked;
+            if (!name || !phone || !age || !serviceVal || !dt || !slot) { Toast.warning('Fill all fields'); return; }
+            try {
+                const r = await API.Queue.addElder({ name, phone, age: parseInt(age), gender: 'Other', service_id: parseInt(serviceVal), location_id: parseInt(serviceVal), appointment_date: dt, time_window_start: slot, is_emergency: isEmergency });
+                if (r.ok) { Toast.success('Patient Registered!');['elderName', 'elderPhone', 'elderAge', 'elderService', 'timeSlot', 'hospitalLocation'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; }); document.getElementById('isEmergency').checked = false; refreshDashboard(); loadSlots(); }
+                else { Toast.error(r.data.error || 'Registration failed'); }
+            } catch (err) { Toast.error('Network error.'); }
+        }
+
+        async function clearCurrentService() {
+            if (!state.currentQueueEntry) return;
+            const res = await API.Queue.cancelCall(state.currentQueueEntry.queue_type, state.currentQueueEntry.queue_id);
+            if (res.ok) { Toast.success('Cleared'); state.currentQueueEntry = null; document.getElementById('currentToken').textContent = '---'; document.getElementById('currentName').textContent = 'Waiting...'; refreshDashboard(); }
+            else { Toast.error(res.data.error || 'Failed'); }
+        }
+
+        function initVisuals() {
+            state.charts.dist = new Chart(document.getElementById('distributionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Elder Wait', 'Normal Wait', 'Elder Served', 'Normal Served'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#e65100', '#ffb74d', '#198754', '#4ade80']
+                    }]
+                }
+            });
+            state.charts.hourly = new Chart(document.getElementById('hourlyLoadChart'), {
+                type: 'bar', data: { labels: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'], datasets: [{ label: 'Check-ins', data: new Array(16).fill(0), backgroundColor: '#16a34a' }, { label: 'Served', data: new Array(16).fill(0), backgroundColor: '#4ade80' }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+        }
+
+        function updateCharts(distData, hourlyData) {
+            if (state.charts.dist) {
+                // Now using 4 data points: [Elder Wait, Normal Wait, Elder Served, Normal Served]
+                state.charts.dist.data.datasets[0].data = distData;
+                state.charts.dist.update();
+            }
+            if (state.charts.hourly && hourlyData.length > 0) {
+                const data = hourlyData.filter(item => item.hour >= 7 && item.hour <= 22);
+                state.charts.hourly.data.labels = data.map(d => d.hour_label);
+                state.charts.hourly.data.datasets[0].data = data.map(d => d.check_ins);
+                state.charts.hourly.data.datasets[1].data = data.map(d => d.served || 0);
+                state.charts.hourly.update();
+            }
+        }
+
+        function toggleVoice() {
+            state.voiceEnabled = !state.voiceEnabled;
+            const btn = document.getElementById('voiceToggle');
+            const statusText = document.getElementById('voiceStatus');
+            if (state.voiceEnabled) { btn.classList.add('active'); statusText.textContent = 'Voice ON'; Voice.test(); }
+            else { btn.classList.remove('active'); statusText.textContent = 'Voice OFF'; Voice.stop(); }
+        }
+        function logout() { Modal.confirm('Are you sure you want to log out?', () => Auth.logout()); }
+    </script>
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

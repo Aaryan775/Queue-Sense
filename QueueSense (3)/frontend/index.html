@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<!-- =============================================
+     QueueSense - Landing Page
+     Smart Queues. Human Care.
+     ============================================= -->
+<html lang="en">
+
+<head>
+    <!-- Meta tags for character encoding and viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>QueueSense - Smart Queue Management System</title>
+    <meta name="description"
+        content="AI-powered digital queue management with elder assistance. Reduce wait times, improve service efficiency, and provide priority care for elderly users.">
+    <meta name="keywords"
+        content="queue management, appointment booking, elder care, hospital queue, bank queue, digital queue">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="QueueSense - Smart Queues. Human Care.">
+    <meta property="og:description" content="AI-powered queue management that prioritizes efficiency and elderly care.">
+    <meta property="og:type" content="website">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-purple': '#8B5CF6',
+                        'neon-green': '#39FF14',
+                        'dark-bg': '#1a1a2e',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Swiper.js (Carousel) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+    <style>
+        .animated-title {
+            overflow: hidden;
+            display: inline-block;
+            /* Prevent flex gaps */
+        }
+
+        .animated-title .letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: letterFadeIn 0.4s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes letterFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hero Positioning */
+        .hero {
+            padding-top: 5rem !important;
+            /* Move it up */
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            margin-top: -3rem;
+            /* Further nudge up */
+        }
+
+        .hero-image-container img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            max-height: 700px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: var(--radius-lg);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* About Section */
+        .about-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 5rem 0;
+        }
+
+        .about-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .about-image {
+            width: 100%;
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Ultra-Premium Statistics Section */
+        .stats-premium-section {
+            background: linear-gradient(135deg, #1a4d6d 0%, #2d1b69 50%, #4a1a5e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-premium-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .stat-card-premium {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .stat-card-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .stat-card-premium:hover::before {
+            left: 100%;
+        }
+
+        .stat-card-premium:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .stat-icon-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 3.5rem;
+            color: #fff;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-trend {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-trend small {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Premium Service Cards */
+        .service-card-premium {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .service-card-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2d1b69 0%, #1a1a2e 100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .service-card-premium:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+            border-color: transparent;
+        }
+
+        .service-card-premium:hover::before {
+            left: 0;
+        }
+
+        .service-card-premium:hover h4,
+        .service-card-premium:hover p {
+            color: #ffffff !important;
+        }
+
+        .card-icon-premium {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-link-premium {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .btn-link-premium span {
+            background: linear-gradient(to right, var(--primary-purple) 50%, var(--text-dark) 50%);
+            background-size: 200% 100%;
+            background-position: right bottom;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: background-position 0.4s cubic-bezier(0.4, 0, 0.2, 1), -webkit-text-fill-color 0.4s;
+        }
+
+        .btn-link-premium::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-purple);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .service-card-premium:hover .btn-link-premium {
+            transform: translateX(10px);
+        }
+
+        .service-card-premium:hover .btn-link-premium span {
+            background-position: left bottom;
+            -webkit-text-fill-color: #ffffff;
+        }
+
+        .service-card-premium:hover .btn-link-premium::after {
+            width: 100%;
+            background: #ffffff;
+        }
+
+        .btn-link-premium i {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-left: 8px;
+            color: var(--text-dark);
+        }
+
+        .service-card-premium:hover .btn-link-premium i {
+            transform: translateX(5px) scale(1.2);
+            color: #ffffff;
+        }
+
+        .btn-link-premium:active span {
+            -webkit-text-fill-color: var(--neon-green) !important;
+        }
+
+        .btn-link-premium:active i {
+            color: var(--neon-green) !important;
+        }
+
+        .btn-link-premium:active::after {
+            background: var(--neon-green) !important;
+        }
+
+        .card-footer-premium {
+            margin-top: auto;
+            padding-top: 1.5rem;
+        }
+
+        /* Premium Feature Cards */
+        .feature-card-premium {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card-premium:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary-purple);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-purple) 0%, #a78bfa 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        /* How It Works Premium Steps */
+        .step-card-premium {
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-number-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+        }
+
+        .step-number-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.05);
+            z-index: 1;
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .step-connector {
+                display: block;
+            }
+        }
+
+        .step-card-premium:last-child .step-connector {
+            display: none;
+        }
+
+        /* Fix Tailwind / Bootstrap Collapse Conflict */
+        .navbar-collapse.collapse {
+            visibility: visible !important;
+        }
+
+        .navbar-collapse.collapse.show {
+            visibility: visible !important;
+            display: block !important;
+        }
+
+        @media (min-width: 992px) {
+            .navbar-collapse.collapse {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- =============================================
+         Navigation Bar
+         ============================================= -->
+    <nav class="navbar navbar-expand-lg" id="mainNavbar">
+        <div class="container">
+            <!-- Logo and Brand -->
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-layer-group"></i>
+                <span>QueueSense</span>
+            </a>
+
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item"><a href="#about" class="nav-link hover-underline">About</a></li>
+                    <li class="nav-item"><a href="#services" class="nav-link hover-underline">Services</a></li>
+                    <li class="nav-item"><a href="#features" class="nav-link hover-underline">Features</a></li>
+                    <li class="nav-item"><a href="#how-it-works" class="nav-link hover-underline">How It Works</a></li>
+                    <li class="nav-item ms-lg-2"><a href="login.html" class="btn btn-secondary btn-sm">Login</a></li>
+                    <li class="nav-item ms-2"><a href="login.html" class="btn btn-primary btn-sm">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- =============================================
+         Hero Section
+         ============================================= -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Hero Content -->
+                <div class="col-lg-6 hero-content">
+                    <!-- Animated Main Headline -->
+                    <h1 class="animated-title" id="heroTitle">Smart Queues<br><span class="text-neon">Human Care</span>
+                    </h1>
+
+                    <!-- Tagline -->
+                    <p class="hero-tagline animate-fadeInUp animate-delay-1">
+                        AI-powered queue management that prioritizes efficiency for everyone
+                        and provides assisted care for elderly users.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="hero-buttons animate-fadeInUp animate-delay-2">
+                        <a href="login.html" class="btn btn-primary btn-lg btn-ripple">
+                            <i class="fas fa-rocket"></i>
+                            Get Started Free
+                        </a>
+                        <a href="#how-it-works" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-play-circle"></i>
+                            See How It Works
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="hero-image-container animate-fadeInUp animate-delay-3">
+                        <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&q=80&w=2000"
+                            alt="Smart Queue Management - Professional Service Desk">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =============================================
+         About Section
+         ============================================= -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="row align-items-stretch g-5">
+                <div class="col-lg-6">
+                    <div class="about-image h-100">
+                        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=1200"
+                            alt="AI Smart Queue Management - Staff Interacting with Dashboard" class="img-fluid h-100">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about-card h-100 d-flex flex-column justify-content-center">
+                        <h2 class="mb-6 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
+                            About <span class="text-[#8B5CF6]">QueueSense</span>
+                        </h2>
+                        <p class="lead text-muted mb-4">
+                            We're on a mission to transform how businesses manage customer flow.
+                            QueueSense combines cutting-edge AI technology with a human-centered approach
+                            to create seamless queue experiences.
+                        </p>
+                        <div class="about-mission-quote mt-4">
+                            <i class="fas fa-quote-left mb-3"
+                                style="color: var(--primary-purple); font-size: 1.5rem; opacity: 0.5;"></i>
+                            <p class="fst-italic"
+                                style="color: var(--text-dark); font-size: 1.1rem; border-left: 3px solid var(--primary-purple); padding-left: 1.5rem;">
+                                Efficiency without empathy is just a number. We're redefining the wait by empowering
+                                service staff
+                                with smart tools that put human care back at the heart of every interaction.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         Statistics Section - Premium Enterprise
+         ============================================= -->
+    <section class="stats-premium-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="text-white text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight">Real-Time
+                    Performance</h2>
+                <p class="text-white-50">Live metrics powered by QueueSense AI</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stat-card-premium">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold text-white mb-2 stat-number" id="statHappyClients">0+</h2>
+                        <p class="text-white-50 mb-0 stat-label">Happy Clients</p>
+                        <div class="stat-trend">
+                            <small class="text-success"><i class="bi bi-arrow-up"></i> Growing</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card-premium">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">
+                                <i class="bi bi-ticket-perforated-fill"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold text-white mb-2 stat-number" id="statTokensServed">0+</h2>
+                        <p class="text-white-50 mb-0 stat-label">Tokens Served</p>
+                        <div class="stat-trend">
+                            <small class="text-info"><i class="bi bi-graph-up"></i> All Time</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card-premium">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">
+                                <i class="bi bi-grid-3x3-gap-fill"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold text-white mb-2 stat-number" id="statActiveQueues">0</h2>
+                        <p class="text-white-50 mb-0 stat-label">Active Queues</p>
+                        <div class="stat-trend">
+                            <small class="text-warning"><i class="bi bi-lightning-fill"></i> Live Now</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         Services Section
+         ============================================= -->
+    <section class="section section-light" id="services">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="text-center mb-4">
+                <h2 class="scroll-reveal text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">Built for Every
+                    Service Industry</h2>
+                <p class="text-muted scroll-reveal">
+                    From hospitals to restaurants, banks to government offices -
+                    we've got you covered.
+                </p>
+            </div>
+
+            <!-- Services Carousel -->
+            <div class="swiper services-swiper pb-12 mt-4">
+                <div class="swiper-wrapper">
+                    <!-- Hospital Card -->
+                    <div class="swiper-slide h-auto">
+                        <div class="card service-card-premium h-full scroll-reveal">
+                            <div class="card-icon-premium"
+                                style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="card-body p-0">
+                                <h4 class="fw-bold mb-3">Hospitals</h4>
+                                <p class="text-muted small">
+                                    Manage OPD queues, emergency triage, and appointment scheduling
+                                    with elder priority.
+                                </p>
+                            </div>
+                            <div class="card-footer-premium">
+                                <a href="solutions-hospitals.html" class="btn-link-premium">
+                                    <span>Explore Solution</span> <i class="fas fa-chevron-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Card -->
+                    <div class="swiper-slide h-auto">
+                        <div class="card service-card-premium h-full scroll-reveal">
+                            <div class="card-icon-premium"
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-building-columns"></i>
+                            </div>
+                            <div class="card-body p-0">
+                                <h4 class="fw-bold mb-3">Banks</h4>
+                                <p class="text-muted small">
+                                    Streamline customer service, reduce lobby crowding, and
+                                    improve transaction efficiency.
+                                </p>
+                            </div>
+                            <div class="card-footer-premium">
+                                <a href="solutions-banks.html" class="btn-link-premium">
+                                    <span>Explore Solution</span> <i class="fas fa-chevron-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Government Card -->
+                    <div class="swiper-slide h-auto">
+                        <div class="card service-card-premium h-full scroll-reveal">
+                            <div class="card-icon-premium"
+                                style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <div class="card-body p-0">
+                                <h4 class="fw-bold mb-3">Government</h4>
+                                <p class="text-muted small">
+                                    Modernize public services with digital queue management
+                                    and appointment booking.
+                                </p>
+                            </div>
+                            <div class="card-footer-premium">
+                                <a href="solutions-government.html" class="btn-link-premium">
+                                    <span>Explore Solution</span> <i class="fas fa-chevron-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Restaurant Card -->
+                    <div class="swiper-slide h-auto">
+                        <div class="card service-card-premium h-full scroll-reveal">
+                            <div class="card-icon-premium"
+                                style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="card-body p-0">
+                                <h4 class="fw-bold mb-3">Restaurants</h4>
+                                <p class="text-muted small">
+                                    Manage table waitlists, takeaway orders, and reservations
+                                    with real-time updates.
+                                </p>
+                            </div>
+                            <div class="card-footer-premium">
+                                <a href="solutions-restaurants.html" class="btn-link-premium">
+                                    <span>Explore Solution</span> <i class="fas fa-chevron-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="swiper-pagination !-bottom-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         Features Section
+         ============================================= -->
+    <section class="section section-dark" id="features">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="text-center mb-4">
+                <h2 class="scroll-reveal text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight"
+                    style="color: var(--text-light);">
+                    Features That Make a Difference
+                </h2>
+                <p class="scroll-reveal" style="color: var(--text-purple-light);">
+                    Our intelligent queue system adapts to your needs with powerful features.
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row g-4 justify-content-center">
+                <!-- Feature 1: Priority Queue -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card-premium scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-users-gear"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-3">Weighted Priority Queue</h4>
+                        <p class="text-white-50 small">
+                            Dynamic priority scoring balances elder care with fairness.
+                            No one gets blocked, everyone gets served efficiently.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Flexible Windows -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card-premium scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-3">Flexible Service Windows</h4>
+                        <p class="text-white-50 small">
+                            20-minute service windows instead of rigid time slots.
+                            Early arrivals are handled gracefully.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Elder Assistance -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card-premium scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-3">Elder Assistance Mode</h4>
+                        <p class="text-white-50 small">
+                            Staff-operated interface for elderly users.
+                            Large text, simple forms, and proactive voice announcements.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 4: Real-time Updates -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card-premium scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-3">Real-Time Updates</h4>
+                        <p class="text-white-50 small">
+                            Live queue status updates every 5 seconds.
+                            Know exactly where you stand with instant notifications.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 5: Voice Notifications -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card-premium scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-volume-high"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-3">Voice Notifications</h4>
+                        <p class="text-white-50 small">
+                            Clear voice announcements for token calls.
+                            Optimized for elderly users with slow speech.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 6: Analytics -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card-premium scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="fw-bold text-white mb-3">Smart Analytics</h4>
+                        <p class="text-white-50 small">
+                            Track wait times, peak hours, and service efficiency.
+                            Make data-driven improvements in real-time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         How It Works Section
+         ============================================= -->
+    <section class="section" id="how-it-works">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="text-center mb-4">
+                <h2 class="scroll-reveal text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">How QueueSense
+                    Works</h2>
+                <p class="text-muted scroll-reveal">
+                    Simple for users, powerful for staff, insightful for admins.
+                </p>
+            </div>
+
+            <!-- Steps -->
+            <div class="row g-0 mt-5">
+                <!-- Step 1 -->
+                <div class="col-md-4">
+                    <div class="step-card-premium text-center scroll-reveal">
+                        <div class="step-number-wrapper">
+                            <div class="step-number-circle text-primary">
+                                <i class="fas fa-calendar-check text-primary"></i>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+                        <h4 class="fw-bold mt-3">1. Book or Walk-In</h4>
+                        <p class="text-muted small px-lg-4">
+                            Book an appointment with a flexible time window,
+                            or simply walk in and join the queue.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="col-md-4">
+                    <div class="step-card-premium text-center scroll-reveal">
+                        <div class="step-number-wrapper">
+                            <div class="step-number-circle"
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-ticket-simple text-white"></i>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+                        <h4 class="fw-bold mt-3">2. Get Your Token</h4>
+                        <p class="text-muted small px-lg-4">
+                            Receive a unique token with real-time position
+                            tracking and estimated wait time.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="col-md-4">
+                    <div class="step-card-premium text-center scroll-reveal">
+                        <div class="step-number-wrapper">
+                            <div class="step-number-circle"
+                                style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);">
+                                <i class="fas fa-check-circle text-white"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold mt-3">3. Get Served</h4>
+                        <p class="text-muted small px-lg-4">
+                            Hear your token announced, proceed to your counter,
+                            and receive quality service.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         Enterprise Reviews Section (High-End SaaS Style)
+         ============================================= -->
+    <section class="py-24 bg-[#1a1a2e] relative overflow-hidden" id="reviews">
+        <!-- Background Accents -->
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-600/5 rounded-full blur-[100px] pointer-events-none">
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-20 scroll-reveal">
+                <span
+                    class="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#39FF14] text-xs font-bold uppercase tracking-[0.2em] mb-6">
+                    Customer Success
+                </span>
+                <h2 class="text-white text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+                    Trusted by <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">Industry
+                        Giants</span>
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg md:text-xl font-medium leading-relaxed">
+                    Driving digital transformation and operational excellence across global sectors.
+                </p>
+            </div>
+
+            <!-- Swiper Carousel -->
+            <div class="swiper review-swiper pb-16">
+                <div class="swiper-wrapper">
+                    <!-- Review 1: Healthcare -->
+                    <div class="swiper-slide h-auto">
+                        <div
+                            class="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] h-full flex flex-col transition-all duration-500 hover:bg-white/[0.08] hover:border-purple-500/40 hover:-translate-y-2 group">
+                            <div class="flex justify-between items-start mb-8">
+                                <div class="flex gap-1 text-yellow-400">
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                </div>
+                                <div class="opacity-30 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-hospital-user text-2xl text-purple-400"></i>
+                                </div>
+                            </div>
+
+                            <blockquote class="flex-grow">
+                                <p class="text-white text-lg md:text-xl leading-relaxed font-medium mb-10">
+                                    "QueueSense has redefined our patient intake. We've seen a <span
+                                        class="text-purple-400 font-bold">40% reduction</span> in wait times which has
+                                    directly improved our NPS scores."
+                                </p>
+                            </blockquote>
+
+                            <div class="flex items-center gap-4 pt-8 border-t border-white/10">
+                                <img src="https://ui-avatars.com/api/?name=Sarah+Chen&background=8B5CF6&color=fff&bold=true"
+                                    alt="Sarah Chen" class="w-14 h-14 rounded-full ring-2 ring-purple-500/20">
+                                <div>
+                                    <h4 class="text-white font-bold text-lg">Dr. Sarah Chen</h4>
+                                    <p class="text-gray-400 text-sm font-medium">Chief of Operations | St. Jude’s</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 2: Finance -->
+                    <div class="swiper-slide h-auto">
+                        <div
+                            class="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] h-full flex flex-col transition-all duration-500 hover:bg-white/[0.08] hover:border-emerald-500/40 hover:-translate-y-2 group">
+                            <div class="flex justify-between items-start mb-8">
+                                <div class="flex gap-1 text-yellow-400">
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                </div>
+                                <div class="opacity-30 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-building-columns text-2xl text-emerald-400"></i>
+                                </div>
+                            </div>
+
+                            <blockquote class="flex-grow">
+                                <p class="text-white text-lg md:text-xl leading-relaxed font-medium mb-10">
+                                    "Transitioning to digital queues was a hurdle until QueueSense. The <span
+                                        class="text-emerald-400 font-bold">analytics hub</span> is indispensable for our
+                                    regional performance audits."
+                                </p>
+                            </blockquote>
+
+                            <div class="flex items-center gap-4 pt-8 border-t border-white/10">
+                                <img src="https://ui-avatars.com/api/?name=Marcus+Thompson&background=10b981&color=fff&bold=true"
+                                    alt="Marcus Thompson" class="w-14 h-14 rounded-full ring-2 ring-emerald-500/20">
+                                <div>
+                                    <h4 class="text-white font-bold text-lg">Marcus Thompson</h4>
+                                    <p class="text-gray-400 text-sm font-medium">VP Experience | Global Bank</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3: Public Sector -->
+                    <div class="swiper-slide h-auto">
+                        <div
+                            class="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] h-full flex flex-col transition-all duration-500 hover:bg-white/[0.08] hover:border-purple-500/40 hover:-translate-y-2 group">
+                            <div class="flex justify-between items-start mb-8">
+                                <div class="flex gap-1 text-yellow-400">
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                </div>
+                                <div class="opacity-30 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-landmark-flag text-2xl text-purple-400"></i>
+                                </div>
+                            </div>
+
+                            <blockquote class="flex-grow">
+                                <p class="text-white text-lg md:text-xl leading-relaxed font-medium mb-10">
+                                    "A remarkable tool for <span class="text-purple-400 font-bold">public sector
+                                        transparency</span>. Citizen satisfaction has skyrocketed since we integrated
+                                    the automated notification system."
+                                </p>
+                            </blockquote>
+
+                            <div class="flex items-center gap-4 pt-8 border-t border-white/10">
+                                <img src="https://ui-avatars.com/api/?name=Elena+Rodriguez&background=8B5CF6&color=fff&bold=true"
+                                    alt="Elena Rodriguez" class="w-14 h-14 rounded-full ring-2 ring-purple-500/20">
+                                <div>
+                                    <h4 class="text-white font-bold text-lg">Elena Rodriguez</h4>
+                                    <p class="text-gray-400 text-sm font-medium">Director | City Public Services</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 4: Hospitality -->
+                    <div class="swiper-slide h-auto">
+                        <div
+                            class="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] h-full flex flex-col transition-all duration-500 hover:bg-white/[0.08] hover:border-emerald-500/40 hover:-translate-y-2 group">
+                            <div class="flex justify-between items-start mb-8">
+                                <div class="flex gap-1 text-yellow-400">
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                    <i class="fas fa-star text-sm"></i>
+                                </div>
+                                <div class="opacity-30 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-utensils text-2xl text-emerald-400"></i>
+                                </div>
+                            </div>
+
+                            <blockquote class="flex-grow">
+                                <p class="text-white text-lg md:text-xl leading-relaxed font-medium mb-10">
+                                    "Managing high-traffic dining hours is effortless now. Our guests love the <span
+                                        class="text-emerald-400 font-bold">SMS notifications</span> and decreased lobby
+                                    congestion."
+                                </p>
+                            </blockquote>
+
+                            <div class="flex items-center gap-4 pt-8 border-t border-white/10">
+                                <img src="https://ui-avatars.com/api/?name=Julian+Rossi&background=10b981&color=fff&bold=true"
+                                    alt="Julian Rossi" class="w-14 h-14 rounded-full ring-2 ring-emerald-500/20">
+                                <div>
+                                    <h4 class="text-white font-bold text-lg">Chef Julian Rossi</h4>
+                                    <p class="text-gray-400 text-sm font-medium">Owner | The Grand Trattoria</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Controls -->
+                <div class="flex justify-center items-center gap-8 mt-12">
+                    <div class="swiper-pagination !static !w-auto"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         CTA Section
+         ============================================= -->
+    <section class="section section-dark">
+        <div class="container text-center">
+            <h2 class="scroll-reveal text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 tracking-tight"
+                style="color: var(--text-light);">
+                Ready to Transform Your Queue Experience?
+            </h2>
+            <p class="scroll-reveal"
+                style="color: var(--text-purple-light); max-width: 600px; margin: 0 auto var(--spacing-xl);">
+                Join thousands of organizations that have already improved
+                their service efficiency with QueueSense.
+            </p>
+            <div class="hero-buttons justify-content-center scroll-reveal">
+                <a href="login.html" class="btn btn-primary btn-lg btn-ripple">
+                    <i class="fas fa-rocket"></i>
+                    Start Free Today
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         Footer
+         ============================================= -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-brand">
+                    <h3>
+                        <i class="fas fa-layer-group"></i>
+                        QueueSense
+                    </h3>
+                    <p>
+                        AI-powered queue management that puts humans first.
+                        Smart for everyone, caring for elders.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                    </ul>
+                </div>
+
+                <!-- For Users -->
+                <div class="footer-column">
+                    <h4>For Users</h4>
+                    <ul class="footer-links">
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="user/dashboard.html">Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <!-- For Staff -->
+                <div class="footer-column">
+                    <h4>For Staff</h4>
+                    <ul class="footer-links">
+                        <li><a href="login.html">Staff Login</a></li>
+                        <li><a href="staff/dashboard.html">Staff Dashboard</a></li>
+                        <li><a href="admin/dashboard.html">Admin Panel</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; 2026 QueueSense. College Project - All Rights Reserved.</p>
+                <p>Made with <i class="fas fa-heart" style="color: var(--neon-green);"></i> for better queues.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =============================================
+         Scripts
+         ============================================= -->
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Letter Spacing Animation Helper
+        document.addEventListener('DOMContentLoaded', () => {
+            const title = document.getElementById('heroTitle');
+            if (title) {
+                const text = title.innerHTML.trim();
+                let newHTML = '';
+                let delay = 0;
+                let isTag = false;
+
+                // Simple parser to handle <br> and <span>
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+
+                    if (char === '<') isTag = true;
+
+                    if (isTag) {
+                        newHTML += char;
+                        if (char === '>') isTag = false;
+                        continue;
+                    }
+
+                    if (char === ' ') {
+                        newHTML += '<span style="display:inline-block; width:0.25em;">&nbsp;</span>';
+                    } else {
+                        newHTML += `<span class="letter" style="animation-delay: ${delay}s">${char}</span>`;
+                        delay += 0.035; // Fine-tuned speed
+                    }
+                }
+                title.innerHTML = newHTML;
+            }
+        });
+
+        // Count animation function
+        function animateCount(id, target, suffix = '', duration = 2000) {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * target);
+                obj.innerHTML = current + suffix;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize Swiper Carousels
+        const reviewSwiper = new Swiper('.review-swiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                },
+                1100: {
+                    slidesPerView: 3,
+                },
+            }
+        });
+
+        const servicesSwiper = new Swiper('.services-swiper', {
+            slidesPerView: 1,
+            spaceBetween: 25,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 2,
+                },
+                1024: {
+                    slidesPerView: 4,
+                },
+            }
+        });
+
+        // Load public stats
+        ready(async () => {
+            try {
+                const resp = await API.Analytics.getPublicStats();
+                if (resp && resp.ok) {
+                    const data = resp.data;
+
+                    // Animate counts
+                    animateCount('statHappyClients', data.happy_clients, '+');
+                    animateCount('statTokensServed', data.tokens_served, '+');
+
+                    // Update active queues if available
+                    if (data.active_queues !== undefined) {
+                        animateCount('statActiveQueues', data.active_queues, '');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load public stats:', err);
+                // Fallback values
+                document.getElementById('statHappyClients').textContent = '500+';
+                document.getElementById('statTokensServed').textContent = '1000+';
+                document.getElementById('statActiveQueues').textContent = '12';
+            }
+        });
+    </script>
+</body>
+
+</html>

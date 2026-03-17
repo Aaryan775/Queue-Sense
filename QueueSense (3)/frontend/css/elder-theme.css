@@ -1,0 +1,333 @@
+/* =============================================
+   QueueSense - Elder Theme Stylesheet
+   High contrast, large text for elderly users
+   ============================================= */
+
+/* =============================================
+   Base Elder Theme Overrides
+   ============================================= */
+
+/* Apply elder theme to body when class is present */
+body.elder-theme {
+    font-size: 20px;
+    /* Larger base font */
+    line-height: 1.8;
+    /* More line spacing */
+}
+
+/* =============================================
+   Increased Font Sizes
+   ============================================= */
+
+.elder-theme h1 {
+    font-size: 3rem;
+}
+
+.elder-theme h2 {
+    font-size: 2.5rem;
+}
+
+.elder-theme h3 {
+    font-size: 2rem;
+}
+
+.elder-theme h4 {
+    font-size: 1.5rem;
+}
+
+.elder-theme p,
+.elder-theme span,
+.elder-theme label {
+    font-size: 1.25rem;
+}
+
+/* =============================================
+   High Contrast Colors
+   ============================================= */
+
+.elder-theme {
+    --text-dark: #000000;
+    /* Pure black text */
+    --text-light: #ffffff;
+    /* Pure white text */
+    --text-muted: #333333;
+    /* Darker muted text */
+}
+
+/* Stronger text contrast */
+.elder-theme .card,
+.elder-theme .form-control,
+.elder-theme .btn {
+    font-weight: 500;
+}
+
+/* =============================================
+   Larger Interactive Elements
+   ============================================= */
+
+/* Bigger buttons */
+.elder-theme .btn {
+    padding: 1.25rem 2.5rem;
+    font-size: 1.25rem;
+    min-height: 60px;
+}
+
+/* Larger form inputs */
+.elder-theme .form-control {
+    padding: 1rem 1.25rem;
+    font-size: 1.25rem;
+    min-height: 60px;
+}
+
+/* Larger checkboxes and radios */
+.elder-theme input[type="checkbox"],
+.elder-theme input[type="radio"] {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+/* =============================================
+   Simplified Layout
+   ============================================= */
+
+/* More spacing between elements */
+.elder-theme .card {
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.elder-theme .form-group {
+    margin-bottom: 2rem;
+}
+
+/* Larger click/tap targets */
+.elder-theme .nav-link {
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+}
+
+/* =============================================
+   Token Display for Elders
+   ============================================= */
+
+.elder-theme .token-display {
+    font-size: 6rem;
+    /* Extra large token */
+    padding: 3rem;
+}
+
+.elder-theme .queue-position .position-number {
+    font-size: 4rem;
+}
+
+/* =============================================
+   Clear Visual Indicators
+   ============================================= */
+
+/* Thicker borders */
+.elder-theme .card,
+.elder-theme .form-control,
+.elder-theme .alert {
+    border-width: 3px;
+}
+
+/* Focus states more visible */
+.elder-theme .form-control:focus {
+    outline: 4px solid var(--primary-purple);
+    outline-offset: 2px;
+}
+
+.elder-theme .btn:focus {
+    outline: 4px solid var(--neon-green);
+    outline-offset: 2px;
+}
+
+/* =============================================
+   Status Colors More Distinct
+   ============================================= */
+
+/* Success - bright green */
+.elder-theme .alert-success {
+    background: #d4ffd4;
+    border-color: #00aa00;
+    color: #006600;
+}
+
+/* Error - bright red */
+.elder-theme .alert-error {
+    background: #ffd4d4;
+    border-color: #cc0000;
+    color: #990000;
+}
+
+/* Warning - bright yellow */
+.elder-theme .alert-warning {
+    background: #fff3cd;
+    border-color: #cc8800;
+    color: #664400;
+}
+
+/* =============================================
+   Queue Items for Elder View
+   ============================================= */
+
+.elder-theme .queue-item {
+    padding: 1.5rem 2rem;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.elder-theme .queue-item.active {
+    border-width: 4px;
+    background: #d4ffd4;
+}
+
+/* =============================================
+   Navigation for Elders
+   ============================================= */
+
+.elder-theme .navbar {
+    padding: 1.5rem 0;
+}
+
+.elder-theme .navbar-brand {
+    font-size: 2rem;
+}
+
+/* =============================================
+   Elder Assistance Screen Specific
+   ============================================= */
+
+/* Large action buttons */
+.elder-assist-btn {
+    display: block;
+    width: 100%;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+}
+
+.elder-assist-btn:hover {
+    transform: scale(1.02);
+}
+
+/* Success button */
+.elder-assist-btn.success {
+    background: #00aa00;
+    color: white;
+}
+
+/* Cancel button */
+.elder-assist-btn.cancel {
+    background: #cc0000;
+    color: white;
+}
+
+/* Info button */
+.elder-assist-btn.info {
+    background: var(--primary-blue);
+    color: white;
+}
+
+/* =============================================
+   Reduced Animations for Accessibility
+   ============================================= */
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .elder-theme *,
+    .elder-theme *::before,
+    .elder-theme *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Elder theme explicitly reduces motion */
+.elder-theme * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+}
+
+/* =============================================
+   Voice Notification Indicator
+   ============================================= */
+
+.voice-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: var(--darker-bg);
+    border-radius: var(--radius-md);
+    color: var(--text-light);
+    font-size: 1.25rem;
+}
+
+.voice-indicator.active {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.voice-indicator i {
+    font-size: 2rem;
+    color: var(--neon-green);
+}
+
+/* =============================================
+   Simple Progress Indicator
+   ============================================= */
+
+.elder-progress {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    background: var(--light-gray);
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+}
+
+.elder-progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.elder-progress-step .number {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--text-muted);
+    color: white;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.elder-progress-step.active .number {
+    background: var(--primary-purple);
+}
+
+.elder-progress-step.completed .number {
+    background: var(--neon-green);
+    color: var(--dark-bg);
+}
+
+.elder-progress-step .label {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.elder-progress-step.active .label {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
